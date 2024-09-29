@@ -21,3 +21,6 @@ This HTTP server works by listening on a specified port (default is `8080`) and 
 ```bash
 git clone https://github.com/yourusername/Http-Server.git
 cd Http-Server
+```
+# Flow Diagram
+<img src="https://github.com/ajaynegi45/Http-Server/blob/main/project-structure/httpserver.png"  alt="Diagram" />
