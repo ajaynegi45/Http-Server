@@ -2,6 +2,8 @@
 
 This project implements a simple, lightweight HTTP server in Java. The server is capable of handling basic GET requests and responding with appropriate HTTP responses. It's designed to be extensible, so you can easily add more HTTP methods or enhance the functionality.
 
+My goal for this project is to keep it lightweight, highly scalable, secure, and easily customizable. I want users to be able to add their own implementations or features without disrupting the existing codebase.
+
 ## Features
 - Handles multiple concurrent TCP connections.
 - Supports basic HTTP GET requests.
