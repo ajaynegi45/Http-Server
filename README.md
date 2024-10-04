@@ -24,5 +24,16 @@ This HTTP server works by listening on a specified port (default is `8080`) and 
 git clone https://github.com/yourusername/Http-Server.git
 cd Http-Server
 ```
+
+# Acknowledgements
+
+This project wouldn't be possible without the contributions of our amazing community. Thank you for being part of our journey! 🙌
+
+<a href = "https://github.com/ajaynegi45/Http-Server/graphs/contributors">
+  <img src = "https://contrib.rocks/image?repo=ajaynegi45/Http-Server"/>
+</a>
+
+<br/>
+
 # Flow Diagram
 <img src="https://github.com/ajaynegi45/Http-Server/blob/main/project-structure/httpserver.png"  alt="Diagram" />
