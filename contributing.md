@@ -1,106 +1,129 @@
 # Contributing to Http-Server
 
-Thank you for considering contributing to the Http-Server project! We welcome contributions from everyone and aim to make the process as smooth as possible. This document outlines the steps for setting up the development environment, contributing to the project, and some best practices to follow.
+Welcome! 🎉 Whether you're a seasoned developer or just getting started, we appreciate your interest in contributing to our project. Let's work together to make this lightweight, scalable HTTP server even better! 💻🚀
 
-## Table of Contents
+If you have any questions, doubts, or suggestions about contributing (or anything else), feel free to ping me on [LinkedIn](https://www.linkedin.com/in/ajaynegi45/) or [Twitter](https://x.com/ajaynegi45) anytime. I'll do my best to reply as quickly as possible.
 
-- [Getting Started](#getting-started)
-- [Project Structure](#project-structure)
-- [Setting Up the Development Environment](#setting-up-the-development-environment)
-- [Contributing Guidelines](#contributing-guidelines)
-- [Code of Conduct](#code-of-conduct)
+## How to Contribute
 
+You can contribute in a number of ways, depending on your skills and interests:
 
-## Getting Started
+### 1. Code Contributions
 
-To get started with the Http-Server project, please follow these instructions to set up your local development environment.
+- **Fix a Bug** 🐛  
+  If you encounter any bugs, please check if an issue already exists. If not, feel free to open a new one, or if you’re up for it, submit a pull request with a fix.
 
-## Project Structure
+- **Suggest a Feature** 🌟  
+  Have an idea for a new feature? Open an issue to discuss it! Or, if you’re ready, implement the feature and submit a pull request.
 
-The Http-Server project is organized into several key modules:
+- **Improve Performance** ⚡  
+  This server is all about efficiency. If you can optimize performance, contribute your code and help us scale better.
 
-- `com.httpserver.config`: Contains configuration management classes.
-- `com.httpserver.core`: Contains core server functionalities, including handling HTTP connections.
-- `com.httpserver.utils`: Contains utility classes for JSON processing and other functionalities.
-- `com.httpserver.http`: Handles parsing of HTTP requests, including methods, headers, version management, and the parser itself.
+### 2. Non-Code Contributions
 
-## Setting Up the Development Environment
+- **Documentation** 📚  
+  If writing is your strength, help us improve the documentation to make the project more accessible. Better documentation helps everyone!
 
-1. **Prerequisites**:
-    - Java Development Kit (JDK) 11 or later.
-    - Apache Maven for building the project.
-    - An IDE like IntelliJ IDEA or Eclipse (optional but recommended).
+- **Community Engagement**  
+  Answer questions, share the project, or help review issues and pull requests. Every bit helps!
 
-2. **Clone the Repository**:
+---
+
+## Development Setup
+
+Before you start contributing, here’s how you can set up your environment:
+
+### Prerequisites
+
+Make sure you have the following installed on your local machine:
+- **Java JDK 11+**  
+- **Maven**  
+- An IDE like **IntelliJ IDEA** or **Eclipse** (optional but recommended)
+- ⭐ Star the repository and show your support. ***(Very Important)***
+
+### Getting Started
+
+1. **Fork the repository**  
+   Go to the GitHub repo and click **Fork** to create a copy on your GitHub account.
+
+2. **Clone your fork locally**  
+   Clone your fork to your local machine:
    ```bash
-   git clone https://github.com/yourusername/Http-Server.git
+   git clone https://github.com/<your-username>/Http-Server.git
    cd Http-Server
    ```
-   
-3. **Build the Project**: You can build the project using Maven:
-    ```bash
-    mvn clean install
+
+3. **Build the project**  
+   Use Maven to build the project:
+   ```bash
+   mvn clean install
    ```
-4. **Start the Server**: Run the server using the command:   
+
+4. **Run the server**  
+   Start the server:
    ```bash
    java -jar target/httpserver-0.0.1-SNAPSHOT.jar src/main/resources/http.json
    ```
 
-## Contributing Guidelines
-
-1. **Create a New Branch**: Create a new branch for your feature or fix:
-   ```bash
-   git checkout -b my-feature-branch
-   ```
-
-2. **Make Your Changes**: Implement your changes, ensuring they adhere to the project’s coding standards.
-
-3. **Run Tests**: Ensure that all tests pass by running:
+5. **Run tests**  
+   Verify that everything is working:
    ```bash
    mvn test
    ```
 
-4. **Commit Your Changes**: Commit your changes with a clear and concise commit message:
+### Keeping Your Fork Updated
+
+To keep your fork updated with the main project:
+1. Add the original repository as a remote:
    ```bash
-   git commit -m "Add feature XYZ"
+   git remote add upstream https://github.com/ajaynegi45/Http-Server.git
    ```
 
-5. **Push to Your Fork**: Push your changes to your forked repository:
+2. Fetch changes from the original repository:
    ```bash
-   git push origin my-feature-branch
+   git pull upstream main
    ```
 
-6. **Create a Pull Request**: Go to the original repository and create a pull request, describing your changes and why they are beneficial.
+### Submitting Changes
 
+1. Create a new branch for your feature or bugfix:
+   ```bash
+   git checkout -b feature/your-feature-name
+   ```
+
+2. Make your changes, then commit:
+   ```bash
+   git commit -m "Your descriptive commit message"
+   ```
+
+3. Push your changes to GitHub:
+   ```bash
+   git push origin feature/your-feature-name
+   ```
+
+4. Submit a pull request through GitHub.
+
+---
+
+## Guidelines
+
+- **Write Meaningful Commits**  
+  Please keep your commit messages descriptive and focused.
+
+- **Follow the Code Style**  
+  Stick to the established coding conventions in the project for consistency.
+
+- **Testing is Key**  
+  Make sure your changes pass existing tests and add new tests if necessary.
+
+---
 
 ## Code of Conduct
 
-### Our Pledge
+We are committed to fostering an inclusive and welcoming environment. Please read our [Code of Conduct](code_of_conduct.md) to understand how to contribute respectfully.
 
-We pledge to make participation in our project a harassment-free experience for everyone.
+---
 
-### Our Standards
+## Thank You 🙌
 
-**Positive behavior:**
-- Use inclusive language
-- Respect differing viewpoints
-- Accept constructive criticism
-- Show empathy
-
-**Unacceptable behavior:**
-- Harassment or abuse
-- Insulting comments
-- Personal attacks
-- Publishing private information
-
-### Responsibilities
-
-Maintainers will clarify acceptable behavior and take action against violations. They may remove contributions that don’t align with this Code.
-
-### Scope
-
-This Code applies in project spaces and public spaces when representing the project.
-
-### Acknowledgement
-
-Adapted from the [Contributor Covenant](https://www.contributor-covenant.org).
+Thank you for considering contributing to this project. We value every contribution—big or small! Let's build something great together. 💪
