@@ -2,14 +2,24 @@ package com.httpserver.http;
 
 public class HttpParsingException extends Exception {
 
-    private final HttpStatusCode errorCode;
+    private final HttpStatusCode statusCode;
 
-    public HttpParsingException(HttpStatusCode errorCode) {
-        super(errorCode.MESSAGE);
-        this.errorCode = errorCode;
+    /**
+     * Constructs a new HttpParsingException with the specified HttpStatusCode.
+     *
+     * @param statusCode the HTTP status code associated with the exception
+     */
+    public HttpParsingException(HttpStatusCode statusCode) {
+        super(statusCode.MESSAGE);
+        this.statusCode = statusCode;
     }
 
-    public HttpStatusCode getErrorCode() {
-        return errorCode;
+    /**
+     * Returns the HTTP status code associated with this exception.
+     *
+     * @return the HttpStatusCode
+     */
+    public HttpStatusCode getStatusCode() {
+        return statusCode;
     }
 }

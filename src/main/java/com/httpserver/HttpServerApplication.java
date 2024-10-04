@@ -8,11 +8,21 @@ import com.httpserver.core.ServerListenerThread;
 import com.httpserver.config.ConfigurationManager;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+/**
+ * Main application class for the HTTP server.
+ * This class initializes the server by loading configuration settings
+ * and starting the server listener thread.
+ */
 @SpringBootApplication
 public class HttpServerApplication {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(HttpServerApplication.class);
 
+	/**
+	 * The entry point of the HTTP server application.
+	 *
+	 * @param args command-line arguments; expects a single argument specifying the configuration file path.
+	 */
 	public static void main(String[] args) {
 
 		if (args.length != 1) {
@@ -23,7 +33,8 @@ public class HttpServerApplication {
 
 		LOGGER.info("Starting server...");
 
-		ConfigurationManager.getInstance().loadConfigurationFile("src/main/resources/http.json");
+		// Load the configuration from the provided JSON file.
+		ConfigurationManager.getInstance().loadConfigurationFile(args[0]);
 		Configuration config = ConfigurationManager.getInstance().getCurrentConfiguration();
 
 		LOGGER.info("Using Port: {}", config.getPort());
@@ -40,5 +51,4 @@ public class HttpServerApplication {
 			e.printStackTrace();
 		}
 	}
-
 }
