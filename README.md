@@ -4,6 +4,8 @@ This project implements a lightweight and highly scalable HTTP server written in
 
 The HTTP server is designed with performance, security, and simplicity in mind. It supports the most common HTTP methods like GET, POST, PUT, DELETE, and more, allowing developers to add new features or extend functionality without modifying the core structure.
 
+Our primary goal is to keep this server lightweight and efficient, ensuring minimal resource usage without sacrificing functionality.
+
 ## Key Features
 
 - **Multi-Threaded Architecture**: Supports multiple concurrent TCP connections using threading, ensuring efficient handling of multiple requests simultaneously.
