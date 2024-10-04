@@ -1,10 +1,8 @@
 package com.httpserver;
 
 import org.slf4j.Logger;
-
-import java.io.IOException;
 import java.util.Objects;
-
+import java.io.IOException;
 import org.slf4j.LoggerFactory;
 import com.httpserver.config.Configuration;
 import com.httpserver.core.ServerListenerThread;
