@@ -4,6 +4,8 @@ Welcome! 🎉 Whether you're a seasoned developer or just getting started, we ap
 
 If you have any questions, doubts, or suggestions about contributing (or anything else), feel free to ping me on [LinkedIn](https://www.linkedin.com/in/ajaynegi45/) or [Twitter](https://x.com/ajaynegi45) anytime. I'll do my best to reply as quickly as possible.
 
+> Our primary goal is to keep this server lightweight and efficient, ensuring minimal resource usage without sacrificing functionality.
+
 ## How to Contribute
 
 You can contribute in a number of ways, depending on your skills and interests:
