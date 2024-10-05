@@ -52,6 +52,35 @@ The server listens for incoming connections on a specified port (default is `808
 <img src="https://github.com/ajaynegi45/Http-Server/blob/main/project-structure/httpserver.png" height="500px" alt="Diagram" />
 
 
+### Prerequisites
+
+Make sure you have the following installed on your local machine:
+- **Java JDK 11+**
+- **Maven**
+- An IDE like **IntelliJ IDEA** or **Eclipse** (optional but recommended)
+- ⭐ Star the repository and show your support. ***(Very Important)***
+
+### Getting Started
+
+1. **Build the project**  
+   Use Maven to build the project:
+   ```bash
+   mvn clean install
+   ```
+
+2. **Run the server**  
+   Start the server:
+   ```bash
+   java -jar target/httpserver-0.0.1-SNAPSHOT.jar src/main/resources/http.json
+   ```
+
+3. **Run tests**  
+   Verify that everything is working:
+   ```bash
+   mvn test
+   ```
+
+
 # How to Contribute to this Project
 - **Clone the repository**
   
