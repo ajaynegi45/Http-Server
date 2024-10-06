@@ -39,6 +39,7 @@ public class HttpRequest extends HttpMessage {
         this.traceId = UUID.randomUUID().toString(); // Generate a unique trace ID
         this.requestId = UUID.randomUUID().toString(); // Generate a unique request ID
         logger.debug("HttpRequest object created with trace ID: {} and request ID: {}", traceId, requestId);
+        logger.trace("HttpRequest constructor completed for trace ID: {} and request ID: {}", traceId, requestId);
     }
 
     // Rate limiter logic
@@ -51,7 +52,9 @@ public class HttpRequest extends HttpMessage {
     public boolean isRequestAllowed(String clientId) {
         rateLimiters.putIfAbsent(clientId, new RateLimiter(MAX_REQUESTS, TIME_WINDOW_MS));
         RateLimiter rateLimiter = rateLimiters.get(clientId);
-        return rateLimiter.allowRequest();
+        boolean allowed = rateLimiter.allowRequest();
+        logger.trace("Rate limiter checked for clientId {}. Request allowed: {} for trace ID: {} and request ID: {}", clientId, allowed, traceId, requestId);
+        return allowed;
     }
 
     // Getters and setters
@@ -102,37 +105,42 @@ public class HttpRequest extends HttpMessage {
     public void setMethod(HttpMethod method) {
         this.method = method;
         logger.debug("HTTP method set to {} for trace ID {} and request ID {}", method, traceId, requestId);
+        logger.trace("Method set successfully for trace ID: {} and request ID: {}", traceId, requestId);
     }
 
     public void setRequestTarget(String requestTarget) throws HttpParsingException {
+        logger.trace("Attempting to set request target for trace ID {} and request ID {}", traceId, requestId);
         if (requestTarget == null || requestTarget.isEmpty()) {
-            logger.error("Invalid request target: {} for trace ID {} and request ID {}", requestTarget, traceId, requestId);
+            logger.error("Invalid request target: '{}' for trace ID {} and request ID {}. Request target must not be null or empty.", requestTarget, traceId, requestId);
             throw new HttpParsingException(HttpStatusCode.SERVER_ERROR_500_INTERNAL_SERVER_ERROR);
         }
         this.requestTarget = requestTarget;
-        logger.debug("Request target set to {} for trace ID {} and request ID {}", requestTarget, traceId, requestId);
+        logger.debug("Request target set to '{}' for trace ID {} and request ID {}", requestTarget, traceId, requestId);
     }
 
     public void setHttpVersion(String originalHttpVersion) throws BadHttpVersionException, HttpParsingException {
+        logger.trace("Attempting to set HTTP version for trace ID {} and request ID {}", traceId, requestId);
         this.originalHttpVersion = originalHttpVersion;
         this.bestCompatibleHttpVersion = HttpVersion.getBestCompatibleVersion(originalHttpVersion);
         if (this.bestCompatibleHttpVersion == null) {
-            logger.error("HTTP version not supported: {} for trace ID {} and request ID {}", originalHttpVersion, traceId, requestId);
+            logger.error("HTTP version not supported: '{}' for trace ID {} and request ID {}. Throwing BadHttpVersionException.", originalHttpVersion, traceId, requestId);
             throw new HttpParsingException(HttpStatusCode.SERVER_ERROR_505_HTTP_VERSION_NOT_SUPPORTED);
         }
-        logger.debug("Original HTTP version set to {}, best compatible version: {} for trace ID {} and request ID {}", originalHttpVersion, bestCompatibleHttpVersion, traceId, requestId);
+        logger.debug("Original HTTP version set to '{}', best compatible version: '{}' for trace ID {} and request ID {}", originalHttpVersion, bestCompatibleHttpVersion, traceId, requestId);
     }
 
     public void addHeader(String name, String value) {
+        logger.trace("Attempting to add header for trace ID {} and request ID {}", traceId, requestId);
         if (name == null || name.isEmpty() || value == null) {
-            logger.error("Invalid header name or value: name={}, value={} for trace ID {} and request ID {}", name, value, traceId, requestId);
+            logger.error("Invalid header name or value: name='{}', value='{}' for trace ID {} and request ID {}. Header name and value must not be null or empty.", name, value, traceId, requestId);
             throw new IllegalArgumentException("Header name and value must not be null or empty");
         }
         headers.put(name, value);
-        logger.debug("Added header: {} = {} for trace ID {} and request ID {}", name, value, traceId, requestId);
+        logger.debug("Added header: {} = '{}' for trace ID {} and request ID {}", name, value, traceId, requestId);
     }
 
     public void setBody(String body) {
+        logger.trace("Attempting to set body for trace ID {} and request ID {}", traceId, requestId);
         this.body = body;
         logger.debug("Request body set for trace ID {} and request ID {}", traceId, requestId);
     }
@@ -170,8 +178,8 @@ public class HttpRequest extends HttpMessage {
             this.timeWindow = timeWindow;
             this.windowStartTime = System.currentTimeMillis();
             this.requestCount = 0;
+            logger.trace("RateLimiter initialized with maxRequests {} and timeWindow {}ms", maxRequests, timeWindow);
         }
-
 
         /**
          * Allows a new request if it is within the rate limit.
@@ -183,6 +191,7 @@ public class HttpRequest extends HttpMessage {
 
             // Check if the current time exceeds the time window
             if (currentTime - windowStartTime > timeWindow) {
+                logger.trace("Time window expired, resetting request count for RateLimiter");
                 // Reset the count for the new time window
                 windowStartTime = currentTime;
                 requestCount = 1; // Reset count since we're allowing a new request
@@ -192,10 +201,12 @@ public class HttpRequest extends HttpMessage {
             // Allow the request if under the limit
             if (requestCount < maxRequests) {
                 requestCount++;
+                logger.trace("Request allowed for client, requestCount = {} for RateLimiter", requestCount);
                 return true; // Allow additional requests within the limit
             }
 
             // Rate limit exceeded
+            logger.warn("Rate limit exceeded for client. Request denied. Client has made {} requests in the current window, max allowed is {}.", requestCount, maxRequests);
             return false; // Deny request
         }
     }

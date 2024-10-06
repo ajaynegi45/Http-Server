@@ -26,6 +26,7 @@ public class ConfigurationManager {
      * Private constructor to prevent instantiation from outside the class.
      */
     private ConfigurationManager() {
+        logger.trace("ConfigurationManager constructor called.");
     }
 
     /**
@@ -37,6 +38,8 @@ public class ConfigurationManager {
         if (configurationManager == null) {
             configurationManager = new ConfigurationManager();
             logger.info("Created new instance of ConfigurationManager.");
+        } else {
+            logger.trace("Returning existing instance of ConfigurationManager.");
         }
         return configurationManager;
     }
@@ -71,6 +74,7 @@ public class ConfigurationManager {
             while ((i = fileReader.read()) != -1) {
                 sb.append((char) i);
             }
+            logger.trace("Configuration file read successfully, content length: {}", sb.length());
         } catch (IOException e) {
             logger.error("Error reading the configuration file", e);
             throw new HttpConfigurationException(e);
@@ -79,7 +83,8 @@ public class ConfigurationManager {
         JsonNode config;
         try {
             config = Json.parse(sb.toString());
-            logger.info("Successfully parsed the configuration file.");
+            logger.info("Successfully parsed the configuration file into JSON.");
+            logger.trace("Parsed JSON content: {}", sb.toString());
         } catch (IOException e) {
             logger.error("Error parsing the configuration file into JSON", e);
             throw new HttpConfigurationException("Error parsing the Configuration file", e);
@@ -88,6 +93,7 @@ public class ConfigurationManager {
         try {
             myCurrentConfiguration = Json.fromJson(config, Configuration.class);
             logger.info("Configuration successfully loaded into the current configuration.");
+            logger.trace("Loaded configuration: {}", myCurrentConfiguration.toString());
         } catch (IOException e) {
             logger.error("Error converting JSON to Configuration object", e);
             throw new HttpConfigurationException("Error parsing the Configuration file internally", e);
@@ -106,6 +112,7 @@ public class ConfigurationManager {
             throw new HttpConfigurationException("No Current Configuration Set.");
         }
         logger.info("Returning current configuration.");
+        logger.trace("Current configuration: {}", myCurrentConfiguration.toString());
         return myCurrentConfiguration;
     }
 }

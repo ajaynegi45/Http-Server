@@ -26,23 +26,33 @@ public class HttpServerApplication {
      */
     public static void main(String[] args) {
 
-//		if (args.length != 1) {
-//			LOGGER.error("No configuration file provided.");
-//			LOGGER.error("Syntax:  java -jar simplehttpserver-1.0-SNAPSHOT.jar  <config.json>");
-//			return;
-//		}
+        LOGGER.info("Starting HTTP server application...");
 
-        LOGGER.info("Starting server...");
-
-        try {
-            // Load the configuration from the provided JSON file.
-            ConfigurationManager.getInstance().loadConfigurationFile(Objects.requireNonNull(HttpServerApplication.class.getClassLoader().getResource("http.json")).getFile());
-        } catch (Exception e) {
-            LOGGER.error("Failed to load configuration file: {}", e.getMessage());
+        // Uncomment if you want to enforce configuration file path argument
+        /*
+        if (args.length != 1) {
+            LOGGER.error("No configuration file provided.");
+            LOGGER.error("Syntax: java -jar simplehttpserver-1.0-SNAPSHOT.jar <config.json>");
             return;
         }
-        Configuration config = ConfigurationManager.getInstance().getCurrentConfiguration();
+        */
 
+        try {
+            LOGGER.debug("Loading configuration file from the classpath.");
+            // Load the configuration from the provided JSON file.
+            String configFilePath = Objects.requireNonNull(HttpServerApplication.class.getClassLoader().getResource("http.json")).getFile();
+            ConfigurationManager.getInstance().loadConfigurationFile(configFilePath);
+            LOGGER.debug("Configuration file loaded from path: {}", configFilePath);
+        } catch (NullPointerException e) {
+            LOGGER.error("Configuration file not found: http.json");
+            return;
+        } catch (Exception e) {
+            LOGGER.error("Failed to load configuration file: {}", e.getMessage());
+            LOGGER.debug("Exception details: ", e); // Log full exception stack trace for debugging
+            return;
+        }
+
+        Configuration config = ConfigurationManager.getInstance().getCurrentConfiguration();
         LOGGER.info("Using Port: {}", config.getPort());
         LOGGER.info("Using Webroot: {}", config.getWebroot());
 
@@ -52,8 +62,8 @@ public class HttpServerApplication {
             serverListenerThread.start();
             LOGGER.info("Server listener thread started successfully.");
         } catch (IOException e) {
-            // TODO Handle Later
             LOGGER.error("Error starting server listener thread: {}", e.getMessage());
+            LOGGER.debug("Exception details: ", e); // Log full exception stack trace for debugging
         }
     }
 }

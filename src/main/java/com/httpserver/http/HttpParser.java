@@ -63,9 +63,10 @@ public class HttpParser {
                 _byte = reader.read();
                 if (_byte == LF) {
                     if (!methodParsed || !requestTargetParsed) {
-                        LOGGER.warn("Method or Request Target not parsed properly.");
+                        LOGGER.error("Method or Request Target not parsed properly. MethodParsed: {}, RequestTargetParsed: {}", methodParsed, requestTargetParsed);
                         throw new HttpParsingException(HttpStatusCode.CLIENT_ERROR_400_BAD_REQUEST);
                     }
+                    LOGGER.debug("Request line parsed successfully.");
                     return;
                 } else {
                     LOGGER.error("CRLF expected but got: {}", _byte);
@@ -78,7 +79,7 @@ public class HttpParser {
                     LOGGER.debug("Request Line METHOD to Process: {}", processingDataBuffer.toString());
                     try {
                         request.setMethod(HttpMethod.valueOf(processingDataBuffer.toString()));
-                        LOGGER.debug("Parsed HTTP Method: {}", request.getMethod());
+                        LOGGER.info("Parsed HTTP Method: {}", request.getMethod());
                     } catch (IllegalArgumentException e) {
                         LOGGER.error("Unsupported HTTP Method: {}", processingDataBuffer.toString());
                         throw new HttpParsingException(HttpStatusCode.SERVER_ERROR_501_NOT_IMPLEMENTED);
@@ -86,7 +87,7 @@ public class HttpParser {
                     methodParsed = true;
                 } else if (!requestTargetParsed) {
                     if (processingDataBuffer.length() == 0) {
-                        LOGGER.warn("Empty Request Target found.");
+                        LOGGER.error("Empty Request Target found.");
                         throw new HttpParsingException(HttpStatusCode.CLIENT_ERROR_400_BAD_REQUEST);
                     }
                     LOGGER.debug("Request Line REQ TARGET to Process: {}", processingDataBuffer.toString());
@@ -105,6 +106,8 @@ public class HttpParser {
                 }
             }
         }
+        LOGGER.warn("Request line not properly terminated. End of stream reached.");
+        throw new HttpParsingException(HttpStatusCode.CLIENT_ERROR_400_BAD_REQUEST);
     }
 
     /**
@@ -129,7 +132,7 @@ public class HttpParser {
             String headerName = header[0];
             String headerValue = header[1];
             httpRequest.addHeader(headerName, headerValue);
-            LOGGER.debug("Parsed Header: {}: {}", headerName, headerValue);
+            LOGGER.info("Parsed Header: {}: {}", headerName, headerValue);
         }
     }
 
@@ -183,6 +186,6 @@ public class HttpParser {
         }
 
         httpRequest.setBody(bodyBuilder.toString());
-        LOGGER.debug("Body successfully parsed. Total bytes read: {}", totalBytesRead);
+        LOGGER.info("Body successfully parsed. Total bytes read: {}", totalBytesRead);
     }
 }

@@ -21,6 +21,7 @@ public class HttpParsingException extends RuntimeException {
         super(statusCode.MESSAGE);
         this.statusCode = statusCode;
         LOGGER.error("HttpParsingException created with status code: {} - {}", statusCode.STATUS_CODE, statusCode.MESSAGE);
+        LOGGER.debug("Debug: HttpParsingException initiated with status code: {}", statusCode);
     }
 
     /**
@@ -32,6 +33,7 @@ public class HttpParsingException extends RuntimeException {
         super(message);
         this.statusCode = HttpStatusCode.CLIENT_ERROR_400_BAD_REQUEST;  // Defaulting to 400 Bad Request
         LOGGER.error("HttpParsingException created with message: {}", message);
+        LOGGER.debug("Debug: HttpParsingException initiated with custom message: {}", message);
     }
 
     /**
@@ -44,6 +46,7 @@ public class HttpParsingException extends RuntimeException {
         super(message, cause);
         this.statusCode = HttpStatusCode.CLIENT_ERROR_400_BAD_REQUEST;  // Defaulting to 400 Bad Request
         LOGGER.error("HttpParsingException created with message: {} and cause: {}", message, cause);
+        LOGGER.debug("Debug: HttpParsingException initiated with message: {} and cause: {}", message, cause);
     }
 
     /**
@@ -55,6 +58,7 @@ public class HttpParsingException extends RuntimeException {
         super(cause);
         this.statusCode = HttpStatusCode.CLIENT_ERROR_400_BAD_REQUEST;  // Defaulting to 400 Bad Request
         LOGGER.error("HttpParsingException created with cause: {}", cause);
+        LOGGER.debug("Debug: HttpParsingException initiated with cause: {}", cause);
     }
 
     /**

@@ -20,6 +20,7 @@ public class Configuration {
      */
     public Configuration() {
         logger.info("Created a new Configuration object with default values.");
+        logger.trace("Default Configuration constructor invoked.");
     }
 
     /**
@@ -33,6 +34,7 @@ public class Configuration {
         this.port = port;
         this.webroot = webroot;
         logger.info("Created a new Configuration object with port: {} and webroot: {}", port, webroot);
+        logger.trace("Configuration object initialized with port {} and webroot {}", port, webroot);
     }
 
     /**
@@ -42,6 +44,7 @@ public class Configuration {
      */
     public int getPort() {
         logger.debug("Retrieved port: {}", port);
+        logger.trace("getPort() called, returning: {}", port);
         return port;
     }
 
@@ -53,6 +56,7 @@ public class Configuration {
     public void setPort(int port) {
         logger.info("Setting port to: {}", port);
         this.port = port;
+        logger.trace("Port set to: {}", port);
     }
 
     /**
@@ -62,6 +66,7 @@ public class Configuration {
      */
     public String getWebroot() {
         logger.debug("Retrieved webroot: {}", webroot);
+        logger.trace("getWebroot() called, returning: {}", webroot);
         return webroot;
     }
 
@@ -73,5 +78,14 @@ public class Configuration {
     public void setWebroot(String webroot) {
         logger.info("Setting webroot to: {}", webroot);
         this.webroot = webroot;
+        logger.trace("Webroot set to: {}", webroot);
+    }
+
+    @Override
+    public String toString() {
+        return "Configuration{" +
+                "port=" + port +
+                ", webroot='" + webroot + '\'' +
+                '}';
     }
 }
