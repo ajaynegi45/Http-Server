@@ -1,5 +1,6 @@
 package com.httpserver.http;
 
+import com.httpserver.exception.HttpParsingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,7 +30,6 @@ public class HttpParser {
      */
     public HttpRequest parseHttpRequest(InputStream inputStream) throws HttpParsingException {
         InputStreamReader reader = new InputStreamReader(inputStream, StandardCharsets.US_ASCII);
-
         HttpRequest httpRequest = new HttpRequest();
 
         try {
@@ -146,18 +146,22 @@ public class HttpParser {
 
         if (contentLengthHeader == null || contentLengthHeader.isEmpty()) {
             httpRequest.setBody("");
+            LOGGER.debug("No Content-Length header found or it is empty. Setting empty body.");
             return;
         }
 
         int contentLength;
         try {
             contentLength = Integer.parseInt(contentLengthHeader);
+            LOGGER.debug("Content-Length found: {}", contentLength);
         } catch (NumberFormatException e) {
+            LOGGER.error("Invalid Content-Length value: {}", contentLengthHeader);
             throw new HttpParsingException(HttpStatusCode.CLIENT_ERROR_400_BAD_REQUEST);
         }
 
         if (contentLength <= 0) {
             httpRequest.setBody("");
+            LOGGER.debug("Content-Length is 0 or negative. Setting empty body.");
             return;
         }
 
@@ -166,15 +170,19 @@ public class HttpParser {
         int totalBytesRead = 0;
         int bytesRead;
 
+        LOGGER.debug("Starting to read request body.");
         while (totalBytesRead < contentLength && (bytesRead = reader.read(buffer, 0, Math.min(buffer.length, contentLength - totalBytesRead))) != -1) {
             bodyBuilder.append(buffer, 0, bytesRead);
             totalBytesRead += bytesRead;
+            LOGGER.debug("Read {} bytes. Total bytes read so far: {}", bytesRead, totalBytesRead);
         }
 
         if (totalBytesRead < contentLength) {
+            LOGGER.error("Body size does not match Content-Length header. Expected: {}, but read: {}", contentLength, totalBytesRead);
             throw new HttpParsingException(HttpStatusCode.CLIENT_ERROR_400_BAD_REQUEST);
         }
 
         httpRequest.setBody(bodyBuilder.toString());
+        LOGGER.debug("Body successfully parsed. Total bytes read: {}", totalBytesRead);
     }
 }

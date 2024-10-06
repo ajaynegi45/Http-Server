@@ -1,5 +1,8 @@
 package com.httpserver.http;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Enum representing standard HTTP methods used in requests.
  */
@@ -31,16 +34,22 @@ public enum HttpMethod {
     /** The PATCH method applies partial modifications to a resource. */
     PATCH;
 
+    private static final Logger logger = LoggerFactory.getLogger(HttpMethod.class);
+
     /** The maximum length of the HTTP method names. */
     public static final int MAX_LENGTH;
 
     static {
+        logger.debug("Initializing HttpMethod enum and calculating MAX_LENGTH.");
         int tempMaxLength = -1;
         for (HttpMethod method : values()) {
-            if (method.name().length() > tempMaxLength) {
-                tempMaxLength = method.name().length();
+            int length = method.name().length();
+            logger.debug("Method: {}, Length: {}", method, length);
+            if (length > tempMaxLength) {
+                tempMaxLength = length;
             }
         }
         MAX_LENGTH = tempMaxLength;
+        logger.info("HttpMethod enum initialized. MAX_LENGTH set to {}", MAX_LENGTH);
     }
 }

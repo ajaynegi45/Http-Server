@@ -1,5 +1,8 @@
 package com.httpserver.http;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -18,6 +21,8 @@ public enum HttpVersion {
 
     /** The minor version number. */
     public final int MINOR;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(HttpVersion.class);
 
     /**
      * Constructor to create an instance of HttpVersion with a literal, major, and minor version.
@@ -43,25 +48,36 @@ public enum HttpVersion {
      * @throws BadHttpVersionException if the provided version is invalid or unsupported.
      */
     public static HttpVersion getBestCompatibleVersion(String literalVersion) throws BadHttpVersionException {
+        LOGGER.info("Checking best compatible HTTP version for: {}", literalVersion);
+
         Matcher matcher = httpVersionRegexPattern.matcher(literalVersion);
         if (!matcher.find() || matcher.groupCount() != 2) {
+            LOGGER.error("Invalid HTTP version format: {}", literalVersion);
             throw new BadHttpVersionException();
         }
+
         int major = Integer.parseInt(matcher.group("major"));
         int minor = Integer.parseInt(matcher.group("minor"));
+        LOGGER.debug("Parsed version - Major: {}, Minor: {}", major, minor);
 
         HttpVersion tempBestCompatible = null;
         for (HttpVersion version : HttpVersion.values()) {
             if (version.LITERAL.equals(literalVersion)) {
+                LOGGER.info("Exact match found for version: {}", version.LITERAL);
                 return version;
-            } else {
-                if (version.MAJOR == major) {
-                    if (version.MINOR < minor) {
-                        tempBestCompatible = version;
-                    }
+            } else if (version.MAJOR == major) {
+                if (version.MINOR < minor) {
+                    tempBestCompatible = version;
                 }
             }
         }
+
+        if (tempBestCompatible != null) {
+            LOGGER.info("Best compatible version found: {}", tempBestCompatible.LITERAL);
+        } else {
+            LOGGER.warn("No compatible HTTP version found for: {}", literalVersion);
+        }
+
         return tempBestCompatible;
     }
 }

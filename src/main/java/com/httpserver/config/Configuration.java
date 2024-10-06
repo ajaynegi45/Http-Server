@@ -1,10 +1,15 @@
 package com.httpserver.config;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Represents the configuration settings for the HTTP server.
  * This class holds the server's port number and the web root directory.
  */
 public class Configuration {
+
+    private static final Logger logger = LoggerFactory.getLogger(Configuration.class); // SLF4J logger instance
 
     private int port;
     private String webroot;
@@ -14,6 +19,7 @@ public class Configuration {
      * with default values.
      */
     public Configuration() {
+        logger.info("Created a new Configuration object with default values.");
     }
 
     /**
@@ -26,6 +32,7 @@ public class Configuration {
     public Configuration(int port, String webroot) {
         this.port = port;
         this.webroot = webroot;
+        logger.info("Created a new Configuration object with port: {} and webroot: {}", port, webroot);
     }
 
     /**
@@ -34,6 +41,7 @@ public class Configuration {
      * @return the port number
      */
     public int getPort() {
+        logger.debug("Retrieved port: {}", port);
         return port;
     }
 
@@ -43,6 +51,7 @@ public class Configuration {
      * @param port the port number to set
      */
     public void setPort(int port) {
+        logger.info("Setting port to: {}", port);
         this.port = port;
     }
 
@@ -52,6 +61,7 @@ public class Configuration {
      * @return the web root directory
      */
     public String getWebroot() {
+        logger.debug("Retrieved webroot: {}", webroot);
         return webroot;
     }
 
@@ -61,6 +71,7 @@ public class Configuration {
      * @param webroot the web root directory to set
      */
     public void setWebroot(String webroot) {
+        logger.info("Setting webroot to: {}", webroot);
         this.webroot = webroot;
     }
 }
