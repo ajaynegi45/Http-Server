@@ -5,7 +5,8 @@ import java.util.Objects;
 import java.io.IOException;
 import org.slf4j.LoggerFactory;
 import com.httpserver.config.Configuration;
-import com.httpserver.core.ServerListenerThread;
+import com.httpserver.core.http.HttpServerListenerThread;
+import com.httpserver.core.https.HttpsServerListenerThread;
 import com.httpserver.config.ConfigurationManager;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -43,15 +44,20 @@ public class HttpServerApplication {
         }
         Configuration config = ConfigurationManager.getInstance().getCurrentConfiguration();
 
-        LOGGER.info("Using Port: {}", config.getPort());
+        LOGGER.info("Using HTTP Port: {}", config.getHttpPort());
+        LOGGER.info("Using HTTPS Port: {}", config.getHttpsPort());
         LOGGER.info("Using Webroot: {}", config.getWebroot());
 
         try {
             LOGGER.info("Starting server listener thread...");
-            ServerListenerThread serverListenerThread = new ServerListenerThread(config.getPort(), config.getWebroot());
+            HttpsServerListenerThread serverListenerThread = new HttpsServerListenerThread(config.getHttpsPort() , config.getWebroot());
             serverListenerThread.start();
+            
+            HttpServerListenerThread httpServerListenerThread = new HttpServerListenerThread(config.getHttpPort() , config.getWebroot());
+            httpServerListenerThread.start();
+            
             LOGGER.info("Server listener thread started successfully.");
-        } catch (IOException e) {
+        } catch (Exception e) {
             // TODO Handle Later
             LOGGER.error("Error starting server listener thread: {}", e.getMessage());
         }
