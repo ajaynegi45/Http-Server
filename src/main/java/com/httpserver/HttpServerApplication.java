@@ -4,10 +4,12 @@ import org.slf4j.Logger;
 import java.util.Objects;
 import java.io.IOException;
 import org.slf4j.LoggerFactory;
-import com.httpserver.config.Configuration;
+import com.httpserver.config.HttpServerConfiguration;
 import com.httpserver.core.http.HttpServerListenerThread;
 import com.httpserver.core.https.HttpsServerListenerThread;
 import com.httpserver.config.ConfigurationManager;
+import com.httpserver.config.SSLConfiguration;
+
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
@@ -36,30 +38,45 @@ public class HttpServerApplication {
         LOGGER.info("Starting server...");
 
         try {
-            // Load the configuration from the provided JSON file.
-            ConfigurationManager.getInstance().loadConfigurationFile(Objects.requireNonNull(HttpServerApplication.class.getClassLoader().getResource("http.json")).getFile());
+        	loadConfigurations();
         } catch (Exception e) {
             LOGGER.error("Failed to load configuration file: {}", e.getMessage());
             return;
         }
-        Configuration config = ConfigurationManager.getInstance().getCurrentConfiguration();
+        HttpServerConfiguration config = ConfigurationManager.getInstance().getConfiguration(HttpServerConfiguration.class);
 
         LOGGER.info("Using HTTP Port: {}", config.getHttpPort());
         LOGGER.info("Using HTTPS Port: {}", config.getHttpsPort());
         LOGGER.info("Using Webroot: {}", config.getWebroot());
 
         try {
-            LOGGER.info("Starting server listener thread...");
+            LOGGER.info("Starting server listener threads...");
             HttpsServerListenerThread serverListenerThread = new HttpsServerListenerThread(config.getHttpsPort() , config.getWebroot());
             serverListenerThread.start();
             
             HttpServerListenerThread httpServerListenerThread = new HttpServerListenerThread(config.getHttpPort() , config.getWebroot());
             httpServerListenerThread.start();
             
-            LOGGER.info("Server listener thread started successfully.");
+            LOGGER.info("Server listener threads started successfully.");
         } catch (Exception e) {
             // TODO Handle Later
             LOGGER.error("Error starting server listener thread: {}", e.getMessage());
         }
+    }
+    
+    /**
+     * Load configurations from JSON files.
+     * 
+     * @throws IOException if configuration files are not found or can't be read.
+     */
+    private static void loadConfigurations() throws IOException {
+        ConfigurationManager.getInstance().loadConfiguration(
+            Objects.requireNonNull(HttpServerApplication.class.getClassLoader().getResource("http.json")).getFile(),
+            HttpServerConfiguration.class
+        );
+        ConfigurationManager.getInstance().loadConfiguration(
+            Objects.requireNonNull(HttpServerApplication.class.getClassLoader().getResource("ssl-config.json")).getFile(),
+            SSLConfiguration.class
+        );
     }
 }

@@ -1,0 +1,5 @@
+{
+  "keystorePath": "/path/to/your/keystore.jks",
+  "keystorePassword": "YOUR_KEYSTORE_PASSWORD",
+  "keyPassword": "YOUR_KEY_PASSWORD"
+}

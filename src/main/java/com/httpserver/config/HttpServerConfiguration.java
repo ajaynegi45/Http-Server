@@ -5,7 +5,7 @@ package com.httpserver.config;
  * This class holds the server's port numbers for HTTP and HTTPS, and 
  * the web root directory for serving files.
  */
-public class Configuration {
+public class HttpServerConfiguration {
 
     private int httpPort;
     private int httpsPort;
@@ -15,7 +15,7 @@ public class Configuration {
      * Default constructor for creating a Configuration object
      * with default values.
      */
-    public Configuration() {
+    public HttpServerConfiguration() {
     }
 
     /**
@@ -26,7 +26,7 @@ public class Configuration {
      * @param httpsPort  the port number for the HTTPS server
      * @param webroot    the web root directory for serving files
      */
-    public Configuration(int httpPort, int httpsPort, String webroot) {
+    public HttpServerConfiguration(int httpPort, int httpsPort, String webroot) {
         this.httpPort = httpPort;
         this.httpsPort = httpsPort;
         this.webroot = webroot;

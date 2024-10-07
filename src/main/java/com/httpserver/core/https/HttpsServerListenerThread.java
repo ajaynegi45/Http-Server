@@ -1,7 +1,7 @@
 package com.httpserver.core.https;
 
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.Socket;
 import java.security.KeyStore;
 
@@ -12,6 +12,9 @@ import javax.net.ssl.SSLServerSocketFactory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.httpserver.config.ConfigurationManager;
+import com.httpserver.config.SSLConfiguration;
 
 /**
  * Represents a server listener thread that accepts incoming HTTPS connections.
@@ -35,41 +38,46 @@ public class HttpsServerListenerThread extends Thread {
     public HttpsServerListenerThread(int port, String webroot) throws Exception {
         this.port = port;
         this.webroot = webroot;
+        this.serverSocket = createSSLServerSocket();
+    }
 
-        // Load the keystore from the environment variables
-        String keyStorePath = System.getProperty("keystore.path");
-        String keyStorePassword = System.getProperty("keystore.password");
+    /**
+     * Creates and initializes the SSLServerSocket based on the SSL configuration.
+     *
+     * @return an initialized SSLServerSocket
+     * @throws Exception if an error occurs while loading the keystore or initializing the socket
+     */
+    private SSLServerSocket createSSLServerSocket() throws Exception {
+        SSLConfiguration sslConfig = ConfigurationManager.getInstance().getConfiguration(SSLConfiguration.class);
 
-        LOGGER.info(keyStorePassword);
+        String keyStorePath = sslConfig.getKeystorePath();
+        String keyStorePassword = sslConfig.getKeystorePassword();
+        String keyPassword = sslConfig.getKeystorePassword();
 
-        // Load the keystore from the resources folder
         KeyStore keyStore = KeyStore.getInstance("JKS");
-        InputStream keyStoreStream = getClass().getClassLoader().getResourceAsStream(keyStorePath);
+        try (FileInputStream keyStoreStream = new FileInputStream(keyStorePath)) {
+            keyStore.load(keyStoreStream, keyStorePassword.toCharArray());
+        }
 
-        keyStore.load(keyStoreStream, keyStorePassword.toCharArray());
-
-        // Initialize KeyManagerFactory with the keystore
         KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
-        keyManagerFactory.init(keyStore, keyStorePassword.toCharArray());
+        keyManagerFactory.init(keyStore, keyPassword.toCharArray());
 
-        // Initialize SSLContext with KeyManager
         SSLContext sslContext = SSLContext.getInstance("TLS");
         sslContext.init(keyManagerFactory.getKeyManagers(), null, null);
 
         SSLServerSocketFactory factory = sslContext.getServerSocketFactory();
-        this.serverSocket = (SSLServerSocket) factory.createServerSocket(this.port);
+        return (SSLServerSocket) factory.createServerSocket(this.port);
     }
 
     /**
      * Runs the server listener thread, accepting incoming HTTPS connections and
      * spawning worker threads to handle them.
-     * <p>
+     * 
      * This method loops indefinitely until the server socket is closed, 
      * accepting client connections and creating an instance of 
      * {@link HttpsConnectionWorkerThread} for each accepted socket connection. 
      * It logs connection information, including the port and the client's IP address, 
      * and handles any IOExceptions that may occur during socket operations.
-     * </p>
      *
      * @throws IOException if an I/O error occurs while waiting for a connection
      */
