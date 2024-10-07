@@ -1,5 +1,6 @@
 package com.httpserver.http;
 
+import com.httpserver.exception.HttpParsingException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -97,4 +98,24 @@ class HttpRequestTest {
         httpRequest.setBody(bodyContent);
         assertEquals(bodyContent, httpRequest.getBody());
     }
+
+    // New tests for rate limiter
+
+    @Test
+    void testIsRequestAllowed_WithinLimit() {
+        String clientId = "client1";
+        for (int i = 0; i < 100; i++) {
+            assertTrue(httpRequest.isRequestAllowed(clientId), "Request should be allowed");
+        }
+    }
+
+    @Test
+    void testIsRequestAllowed_ExceedsLimit() {
+        String clientId = "client2";
+        for (int i = 0; i < 100; i++) {
+            assertTrue(httpRequest.isRequestAllowed(clientId), "Request should be allowed");
+        }
+        assertFalse(httpRequest.isRequestAllowed(clientId), "Request should be denied after exceeding limit");
+    }
+
 }

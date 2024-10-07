@@ -1,5 +1,8 @@
 package com.httpserver.http;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Enum representing standard HTTP methods used in requests.
  */
@@ -31,16 +34,52 @@ public enum HttpMethod {
     /** The PATCH method applies partial modifications to a resource. */
     PATCH;
 
+    private static final Logger logger = LoggerFactory.getLogger(HttpMethod.class);
+
     /** The maximum length of the HTTP method names. */
     public static final int MAX_LENGTH;
 
     static {
+        logger.debug("Initializing HttpMethod enum and calculating MAX_LENGTH.");
         int tempMaxLength = -1;
         for (HttpMethod method : values()) {
-            if (method.name().length() > tempMaxLength) {
-                tempMaxLength = method.name().length();
+            int length = method.name().length();
+            logger.debug("Method: {}, Length: {}", method, length);
+            if (length > tempMaxLength) {
+                tempMaxLength = length;
             }
         }
         MAX_LENGTH = tempMaxLength;
+        logger.info("HttpMethod enum initialized. MAX_LENGTH set to {}", MAX_LENGTH);
+    }
+
+    /**
+     * Gets the default error information for the specified HTTP method.
+     *
+     * @return a string containing the default error message.
+     */
+    public String getDefaultErrorInfo() {
+        switch (this) {
+            case GET:
+                return "Error occurred while fetching data with GET method.";
+            case HEAD:
+                return "Error occurred while fetching headers with HEAD method.";
+            case POST:
+                return "Error occurred while submitting data with POST method.";
+            case PUT:
+                return "Error occurred while updating data with PUT method.";
+            case DELETE:
+                return "Error occurred while deleting data with DELETE method.";
+            case CONNECT:
+                return "Error occurred while establishing a connection with CONNECT method.";
+            case OPTIONS:
+                return "Error occurred while retrieving options with OPTIONS method.";
+            case TRACE:
+                return "Error occurred while tracing the request with TRACE method.";
+            case PATCH:
+                return "Error occurred while partially modifying data with PATCH method.";
+            default:
+                return "Unknown HTTP method error.";
+        }
     }
 }

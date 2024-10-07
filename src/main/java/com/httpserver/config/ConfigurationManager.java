@@ -2,6 +2,8 @@ package com.httpserver.config;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.httpserver.utils.Json;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -15,6 +17,8 @@ import java.io.IOException;
  */
 public class ConfigurationManager {
 
+    private static final Logger logger = LoggerFactory.getLogger(ConfigurationManager.class); // SLF4J logger instance
+
     private static ConfigurationManager configurationManager;
     private static Configuration myCurrentConfiguration;
 
@@ -22,6 +26,7 @@ public class ConfigurationManager {
      * Private constructor to prevent instantiation from outside the class.
      */
     private ConfigurationManager() {
+        logger.trace("ConfigurationManager constructor called.");
     }
 
     /**
@@ -32,6 +37,9 @@ public class ConfigurationManager {
     public static ConfigurationManager getInstance() {
         if (configurationManager == null) {
             configurationManager = new ConfigurationManager();
+            logger.info("Created new instance of ConfigurationManager.");
+        } else {
+            logger.trace("Returning existing instance of ConfigurationManager.");
         }
         return configurationManager;
     }
@@ -50,34 +58,45 @@ public class ConfigurationManager {
      *                                     or if an error occurs while parsing
      */
     public void loadConfigurationFile(String filePath) {
-        FileReader fileReader = null;
+        logger.info("Attempting to load configuration file from path: {}", filePath);
+
+        FileReader fileReader;
         try {
             fileReader = new FileReader(filePath);
         } catch (FileNotFoundException e) {
+            logger.error("Configuration file not found at path: {}", filePath, e);
             throw new HttpConfigurationException(e);
         }
-        StringBuffer sb = new StringBuffer();
 
+        StringBuilder sb = new StringBuilder();
         int i;
         try {
             while ((i = fileReader.read()) != -1) {
                 sb.append((char) i);
             }
+            logger.trace("Configuration file read successfully, content length: {}", sb.length());
         } catch (IOException e) {
+            logger.error("Error reading the configuration file", e);
             throw new HttpConfigurationException(e);
         }
 
-        JsonNode config = null;
+        JsonNode config;
         try {
             config = Json.parse(sb.toString());
+            logger.info("Successfully parsed the configuration file into JSON.");
+            logger.trace("Parsed JSON content: {}", sb.toString());
         } catch (IOException e) {
+            logger.error("Error parsing the configuration file into JSON", e);
             throw new HttpConfigurationException("Error parsing the Configuration file", e);
         }
 
         try {
             myCurrentConfiguration = Json.fromJson(config, Configuration.class);
+            logger.info("Configuration successfully loaded into the current configuration.");
+            logger.trace("Loaded configuration: {}", myCurrentConfiguration.toString());
         } catch (IOException e) {
-            throw new HttpConfigurationException("Error parsing the Configuration file INTERNAL", e);
+            logger.error("Error converting JSON to Configuration object", e);
+            throw new HttpConfigurationException("Error parsing the Configuration file internally", e);
         }
     }
 
@@ -89,8 +108,11 @@ public class ConfigurationManager {
      */
     public Configuration getCurrentConfiguration() {
         if (myCurrentConfiguration == null) {
+            logger.warn("Attempted to get current configuration, but no configuration is loaded.");
             throw new HttpConfigurationException("No Current Configuration Set.");
         }
+        logger.info("Returning current configuration.");
+        logger.trace("Current configuration: {}", myCurrentConfiguration.toString());
         return myCurrentConfiguration;
     }
 }

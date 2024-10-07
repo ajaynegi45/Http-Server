@@ -32,6 +32,7 @@ public class ServerListenerThread extends Thread {
         this.port = port;
         this.webroot = webroot;
         this.serverSocket = new ServerSocket(this.port);
+        LOGGER.debug("Server initialized on port: {} with webroot: {}", this.port, this.webroot);
     }
 
     /**
@@ -50,22 +51,25 @@ public class ServerListenerThread extends Thread {
     public void run() {
         try {
             while (serverSocket.isBound() && !serverSocket.isClosed()) {
+                LOGGER.debug("Waiting for a new connection...");
                 Socket socket = serverSocket.accept(); // Code waits here until the connection is accepted.
 
                 LOGGER.info("* Connection accepted on port {}", this.port);
-                LOGGER.info("* Connection accepted: " + serverSocket.getInetAddress());
+                LOGGER.info("* Connection accepted from IP: {}", socket.getInetAddress());
 
                 HttpConnectionWorkerThread workerThread = new HttpConnectionWorkerThread(socket);
                 workerThread.start();
             }
         } catch (IOException e) {
-            LOGGER.error("Problem with setting socket", e);
-            e.printStackTrace();
+            LOGGER.error("Problem with setting socket: {}", e.getMessage());
+            LOGGER.debug("Full stack trace:", e); // Log the stack trace for debugging
         } finally {
             try {
                 serverSocket.close();
+                LOGGER.debug("Server socket closed successfully.");
             } catch (IOException e) {
-                LOGGER.error("Error in closing ServerSocket in ServerListenerThread", e);
+                LOGGER.error("Error in closing ServerSocket in ServerListenerThread: {}", e.getMessage());
+                LOGGER.debug("Full stack trace:", e); // Log the stack trace for debugging
             }
         }
     }
