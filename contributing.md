@@ -38,8 +38,8 @@ Before you start contributing, here’s how you can set up your environment:
 ### Prerequisites
 
 Make sure you have the following installed on your local machine:
-- **Java JDK 11+**  
-- **Maven**  
+- **Java JDK 11+**: Run `java -version` to check your current version.
+- **Maven**: Run `mvn -v` after installation.
 - An IDE like **IntelliJ IDEA** or **Eclipse** (optional but recommended)
 - ⭐ Star the repository and show your support. ***(Very Important)***
 
@@ -48,7 +48,7 @@ Make sure you have the following installed on your local machine:
 1. **Fork the repository**  
    Go to the GitHub repo and click **Fork** to create a copy on your GitHub account.
 
-2. **Clone your fork locally**  
+2. **Clone and Set Up Your Local Environment**  
    Clone your fork to your local machine:
    ```bash
    git clone https://github.com/<your-username>/Http-Server.git
@@ -103,7 +103,7 @@ To keep your fork updated with the main project:
    git push origin feature/your-feature-name
    ```
 
-4. Submit a pull request through GitHub.
+4. Submit a pull request through GitHub and wait for it to be reviewed by our maintainers.
 
 ---
 
@@ -117,6 +117,9 @@ To keep your fork updated with the main project:
 
 - **Testing is Key**  
   Make sure your changes pass existing tests and add new tests if necessary.
+
+- **Keep Your Fork Updated**  
+  Always check if your branch is up to date with the main branch.
 
 ---
 

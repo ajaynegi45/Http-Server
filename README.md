@@ -6,6 +6,16 @@ The HTTP server is designed with performance, security, and simplicity in mind. 
 
 Our primary goal is to keep this server lightweight and efficient, ensuring minimal resource usage without sacrificing functionality.
 
+## Table of Contents
+
+- [Key Features](#key-features)
+- [Core Components](#core-components)
+- [How It Works](#how-it-works)
+- [Main Components](#main-components)
+- [Flow Diagram](#flow-diagram)
+- [How To Contribute](#how-to-contribute-to-this-project)
+- [Acknowledgements](#acknowledgements)
+
 ## Key Features
 
 - **Multi-Threaded Architecture**: Supports multiple concurrent TCP connections using threading, ensuring efficient handling of multiple requests simultaneously.
@@ -53,6 +63,10 @@ The server listens for incoming connections on a specified port (default is `808
 
 
 # How to Contribute to this Project
+
+We welcome contributions! Before you start, please read the [Contributing Guidelines](https://github.com/ajaynegi45/Http-Server/blob/main/contributing.md) file, which contains important guidelines to make the contribution process smoother, especially for newcomers.
+Here's a quick overview:
+
 - **Clone the repository**
   
    ``` bash
@@ -60,8 +74,7 @@ The server listens for incoming connections on a specified port (default is `808
 
   cd Http-Server
   ```
-Before making any contributions, please read the [Contributing.md](https://github.com/ajaynegi45/Http-Server/blob/main/contributing.md) file, which contains important guidelines to make the contribution process smoother, especially for newcomers.
-
+  
 # Acknowledgements
 
 This project wouldn't be possible without the contributions of our amazing community. Thank you for being part of our journey! 🙌
