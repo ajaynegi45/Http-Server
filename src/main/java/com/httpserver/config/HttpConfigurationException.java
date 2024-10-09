@@ -11,6 +11,7 @@ public class HttpConfigurationException extends RuntimeException {
      * Constructs a new HttpConfigurationException with {@code null} as its detail message.
      */
     public HttpConfigurationException() {
+        super();
     }
 
     /**

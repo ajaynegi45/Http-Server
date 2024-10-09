@@ -40,4 +40,17 @@ class HttpMethodTest {
         assertEquals(7, HttpMethod.TRACE.ordinal());
         assertEquals(8, HttpMethod.PATCH.ordinal());
     }
+
+    @Test
+    void testGetDefaultErrorInfo() {
+        assertEquals("Error occurred while fetching data with GET method.", HttpMethod.GET.getDefaultErrorInfo());
+        assertEquals("Error occurred while fetching headers with HEAD method.", HttpMethod.HEAD.getDefaultErrorInfo());
+        assertEquals("Error occurred while submitting data with POST method.", HttpMethod.POST.getDefaultErrorInfo());
+        assertEquals("Error occurred while updating data with PUT method.", HttpMethod.PUT.getDefaultErrorInfo());
+        assertEquals("Error occurred while deleting data with DELETE method.", HttpMethod.DELETE.getDefaultErrorInfo());
+        assertEquals("Error occurred while establishing a connection with CONNECT method.", HttpMethod.CONNECT.getDefaultErrorInfo());
+        assertEquals("Error occurred while retrieving options with OPTIONS method.", HttpMethod.OPTIONS.getDefaultErrorInfo());
+        assertEquals("Error occurred while tracing the request with TRACE method.", HttpMethod.TRACE.getDefaultErrorInfo());
+        assertEquals("Error occurred while partially modifying data with PATCH method.", HttpMethod.PATCH.getDefaultErrorInfo());
+    }
 }

@@ -1,5 +1,6 @@
 package com.httpserver.http;
 
+import com.httpserver.exception.HttpParsingException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

@@ -1,5 +1,6 @@
 package com.httpserver.http;
 
+import com.httpserver.exception.HttpParsingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,7 +30,6 @@ public class HttpParser {
      */
     public HttpRequest parseHttpRequest(InputStream inputStream) throws HttpParsingException {
         InputStreamReader reader = new InputStreamReader(inputStream, StandardCharsets.US_ASCII);
-
         HttpRequest httpRequest = new HttpRequest();
 
         try {
@@ -63,9 +63,10 @@ public class HttpParser {
                 _byte = reader.read();
                 if (_byte == LF) {
                     if (!methodParsed || !requestTargetParsed) {
-                        LOGGER.warn("Method or Request Target not parsed properly.");
+                        LOGGER.error("Method or Request Target not parsed properly. MethodParsed: {}, RequestTargetParsed: {}", methodParsed, requestTargetParsed);
                         throw new HttpParsingException(HttpStatusCode.CLIENT_ERROR_400_BAD_REQUEST);
                     }
+                    LOGGER.debug("Request line parsed successfully.");
                     return;
                 } else {
                     LOGGER.error("CRLF expected but got: {}", _byte);
@@ -78,7 +79,7 @@ public class HttpParser {
                     LOGGER.debug("Request Line METHOD to Process: {}", processingDataBuffer.toString());
                     try {
                         request.setMethod(HttpMethod.valueOf(processingDataBuffer.toString()));
-                        LOGGER.debug("Parsed HTTP Method: {}", request.getMethod());
+                        LOGGER.info("Parsed HTTP Method: {}", request.getMethod());
                     } catch (IllegalArgumentException e) {
                         LOGGER.error("Unsupported HTTP Method: {}", processingDataBuffer.toString());
                         throw new HttpParsingException(HttpStatusCode.SERVER_ERROR_501_NOT_IMPLEMENTED);
@@ -86,7 +87,7 @@ public class HttpParser {
                     methodParsed = true;
                 } else if (!requestTargetParsed) {
                     if (processingDataBuffer.length() == 0) {
-                        LOGGER.warn("Empty Request Target found.");
+                        LOGGER.error("Empty Request Target found.");
                         throw new HttpParsingException(HttpStatusCode.CLIENT_ERROR_400_BAD_REQUEST);
                     }
                     LOGGER.debug("Request Line REQ TARGET to Process: {}", processingDataBuffer.toString());
@@ -105,6 +106,8 @@ public class HttpParser {
                 }
             }
         }
+        LOGGER.warn("Request line not properly terminated. End of stream reached.");
+        throw new HttpParsingException(HttpStatusCode.CLIENT_ERROR_400_BAD_REQUEST);
     }
 
     /**
@@ -129,7 +132,7 @@ public class HttpParser {
             String headerName = header[0];
             String headerValue = header[1];
             httpRequest.addHeader(headerName, headerValue);
-            LOGGER.debug("Parsed Header: {}: {}", headerName, headerValue);
+            LOGGER.info("Parsed Header: {}: {}", headerName, headerValue);
         }
     }
 
@@ -146,18 +149,22 @@ public class HttpParser {
 
         if (contentLengthHeader == null || contentLengthHeader.isEmpty()) {
             httpRequest.setBody("");
+            LOGGER.debug("No Content-Length header found or it is empty. Setting empty body.");
             return;
         }
 
         int contentLength;
         try {
             contentLength = Integer.parseInt(contentLengthHeader);
+            LOGGER.debug("Content-Length found: {}", contentLength);
         } catch (NumberFormatException e) {
+            LOGGER.error("Invalid Content-Length value: {}", contentLengthHeader);
             throw new HttpParsingException(HttpStatusCode.CLIENT_ERROR_400_BAD_REQUEST);
         }
 
         if (contentLength <= 0) {
             httpRequest.setBody("");
+            LOGGER.debug("Content-Length is 0 or negative. Setting empty body.");
             return;
         }
 
@@ -166,15 +173,19 @@ public class HttpParser {
         int totalBytesRead = 0;
         int bytesRead;
 
+        LOGGER.debug("Starting to read request body.");
         while (totalBytesRead < contentLength && (bytesRead = reader.read(buffer, 0, Math.min(buffer.length, contentLength - totalBytesRead))) != -1) {
             bodyBuilder.append(buffer, 0, bytesRead);
             totalBytesRead += bytesRead;
+            LOGGER.debug("Read {} bytes. Total bytes read so far: {}", bytesRead, totalBytesRead);
         }
 
         if (totalBytesRead < contentLength) {
+            LOGGER.error("Body size does not match Content-Length header. Expected: {}, but read: {}", contentLength, totalBytesRead);
             throw new HttpParsingException(HttpStatusCode.CLIENT_ERROR_400_BAD_REQUEST);
         }
 
         httpRequest.setBody(bodyBuilder.toString());
+        LOGGER.info("Body successfully parsed. Total bytes read: {}", totalBytesRead);
     }
 }
