@@ -26,6 +26,7 @@ public class HttpConnectionWorkerThread extends Thread {
      */
     public HttpConnectionWorkerThread(Socket socket) {
         this.socket = socket;
+        LOGGER.debug("HttpConnectionWorkerThread created for socket: {}", socket);
     }
 
     /**
@@ -43,12 +44,17 @@ public class HttpConnectionWorkerThread extends Thread {
      */
     @Override
     public void run() {
+    	LOGGER.debug("Handling connection from client: {}", socket.getInetAddress());
+
         try (OutputStream outputStream = socket.getOutputStream()) {
+        	
+        	// Log that output stream have been successfully obtained
+            LOGGER.debug("Output stream obtained for socket: {}", socket);
 
             final int httpsPort = 8043;
             
             // CRLF = Carriage Return (\r) and Line Feed (\n)
-            final String CRLF = "\r\n"; // ASCII codes for CR and LF
+            final String CRLF = "\r\n";
 
             // Constructing an HTTP response with a 301 redirect to HTTPS
             String response = "HTTP/1.1 301 Moved Permanently" + CRLF 
@@ -58,12 +64,17 @@ public class HttpConnectionWorkerThread extends Thread {
             // Sending the response to the client
             outputStream.write(response.getBytes());
             
-            // Log the completion of the connection
-            LOGGER.info("Connection completed..");
+            LOGGER.debug("Sent response to client: {}", socket.getInetAddress());
+            LOGGER.info("Connection completed with client: {}", socket.getInetAddress());
         } catch (IOException e) {
-            // Log and handle communication errors
-            LOGGER.error("Problem with Communication", e);
-            e.printStackTrace();
+            LOGGER.error("IOException occurred while handling connection with client: {}", socket.getInetAddress(), e);
+        }  finally {
+            try {
+                socket.close();
+                LOGGER.debug("Socket closed for client: {}", socket.getInetAddress());
+            } catch (IOException e) {
+                LOGGER.error("Failed to close socket for client: {}", socket.getInetAddress(), e);
+            }
         }
     }
 }

@@ -1,5 +1,8 @@
 package com.httpserver.config;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Represents the configuration settings for the HTTP and HTTPS server.
  * This class holds the server's port numbers for HTTP and HTTPS, and 
@@ -7,6 +10,8 @@ package com.httpserver.config;
  */
 public class HttpServerConfiguration {
 
+	private static final Logger logger = LoggerFactory.getLogger(HttpServerConfiguration.class); // SLF4J logger instance
+	
     private int httpPort;
     private int httpsPort;
     private String webroot;
@@ -15,7 +20,9 @@ public class HttpServerConfiguration {
      * Default constructor for creating a Configuration object
      * with default values.
      */
-    public HttpServerConfiguration() {
+    public HttpServerConfiguration() { 
+    	logger.info("Created a new HttpServerConfiguration object with default values.");
+    	logger.trace("Default HttpServerConfiguration constructor invoked.");
     }
 
     /**
@@ -30,6 +37,8 @@ public class HttpServerConfiguration {
         this.httpPort = httpPort;
         this.httpsPort = httpsPort;
         this.webroot = webroot;
+        logger.info("Created a new HttpServerConfiguration object with http port: {}, https port {} and webroot: {}", httpPort, httpsPort, webroot);
+        logger.trace("HttpServerConfiguration object initialized with http port: {}, https port {} and webroot {}", httpPort, httpsPort, webroot);
     }
 
     /**
@@ -38,6 +47,8 @@ public class HttpServerConfiguration {
      * @return the HTTP port number
      */
     public int getHttpPort() {
+    	logger.debug("Retrieved http port: {}", httpPort);
+        logger.trace("getHttpPort() called, returning: {}", httpPort);
         return httpPort;
     }
 
@@ -46,8 +57,10 @@ public class HttpServerConfiguration {
      *
      * @param httpPort the HTTP port number to set
      */
-    public void setHttpPort(int httpPort) {
+    public void setHttpPort(int httpPort) { 
+    	logger.info("Setting http port to: {}", httpPort);    
         this.httpPort = httpPort;
+        logger.trace("Http port set to: {}", httpPort);
     }
 
     /**
@@ -56,6 +69,8 @@ public class HttpServerConfiguration {
      * @return the HTTPS port number
      */
     public int getHttpsPort() {
+    	logger.debug("Retrieved https port: {}", httpsPort);
+        logger.trace("getHttpsPort() called, returning: {}", httpsPort);
         return httpsPort;
     }
 
@@ -65,7 +80,9 @@ public class HttpServerConfiguration {
      * @param httpsPort the HTTPS port number to set
      */
     public void setHttpsPort(int httpsPort) {
+    	logger.info("Setting https port to: {}", httpsPort);    
         this.httpsPort = httpsPort;
+        logger.trace("Https port set to: {}", httpsPort);
     }
 
     /**
@@ -74,6 +91,8 @@ public class HttpServerConfiguration {
      * @return the web root directory
      */
     public String getWebroot() {
+    	logger.debug("Retrieved webroot: {}", webroot);
+        logger.trace("getWebroot() called, returning: {}", webroot);
         return webroot;
     }
 
@@ -83,6 +102,17 @@ public class HttpServerConfiguration {
      * @param webroot the web root directory to set
      */
     public void setWebroot(String webroot) {
+    	logger.info("Setting webroot to: {}", webroot);
         this.webroot = webroot;
+        logger.trace("Webroot set to: {}", webroot);
+    }
+    
+    @Override
+    public String toString() {
+        return "HttpServerConfiguration{" +
+                "httpPort=" + httpPort +
+                ", httpsPort="+ httpsPort +
+                ", webroot='" + webroot + '\'' +
+                '}';
     }
 }

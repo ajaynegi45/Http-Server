@@ -3,6 +3,9 @@ package com.httpserver.config;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.httpserver.utils.Json;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
@@ -17,6 +20,7 @@ import java.util.Map;
  * </p>
  */
 public class ConfigurationManager {
+	private static final Logger logger = LoggerFactory.getLogger(ConfigurationManager.class); // SLF4J logger instance
 
     private static ConfigurationManager instance;
     private final Map<Class<?>, Object> configurations = new HashMap<>();
@@ -26,6 +30,7 @@ public class ConfigurationManager {
      * Initializes the ConfigurationManager instance.
      */
     private ConfigurationManager() {
+    	logger.trace("ConfigurationManager constructor called.");
     }
 
     /**
@@ -36,6 +41,9 @@ public class ConfigurationManager {
     public static ConfigurationManager getInstance() {
         if (instance == null) {
             instance = new ConfigurationManager();
+            logger.info("Created new instance of ConfigurationManager.");
+        } else {
+            logger.trace("Returning existing instance of ConfigurationManager.");
         }
         return instance;
     }
@@ -53,14 +61,20 @@ public class ConfigurationManager {
      * @throws HttpConfigurationException if there is an error reading or parsing the configuration file
      */
     public <T> void loadConfiguration(String filePath, Class<T> configClass) {
+    	logger.info("Attempting to load configuration file from path: {}", filePath);
+
         String jsonString = readFile(filePath);
         JsonNode configJson = parseJson(jsonString);
         
         try {
             T configInstance = Json.fromJson(configJson, configClass);
             configurations.put(configClass, configInstance);
+            
+            logger.info("Configuration successfully loaded into the current configuration.");
+            logger.trace("Loaded configuration: {}", configInstance.toString());
         } catch (IOException e) {
-            throw new HttpConfigurationException("Error parsing the Configuration file INTERNAL", e);
+        	logger.error("Error converting JSON to Configuration object", e);
+            throw new HttpConfigurationException("Error parsing the Configuration file internally", e);
         }
     }
 
@@ -83,9 +97,11 @@ public class ConfigurationManager {
             while ((i = fileReader.read()) != -1) {
                 sb.append((char) i);
             }
+            logger.trace("Configuration file read successfully, content length: {}", sb.length());
         } catch (IOException e) {
+        	logger.error("Error reading the configuration file", e);
             throw new HttpConfigurationException("Error reading the configuration file: " + filePath, e);
-        }
+        } 
         return sb.toString();
     }
 
@@ -102,8 +118,13 @@ public class ConfigurationManager {
      */
     private JsonNode parseJson(String jsonString) {
         try {
-            return Json.parse(jsonString);
+            JsonNode config = Json.parse(jsonString);
+            logger.info("Successfully parsed the configuration file into JSON.");
+            logger.trace("Parsed JSON content: {}", jsonString);
+          
+            return config;
         } catch (IOException e) {
+        	logger.error("Error parsing the configuration file into JSON", e);
             throw new HttpConfigurationException("Error parsing the configuration JSON", e);
         }
     }
@@ -125,8 +146,11 @@ public class ConfigurationManager {
     public <T> T getConfiguration(Class<T> configClass) {
         T configInstance = (T) configurations.get(configClass);
         if (configInstance == null) {
+            logger.warn("Attempted to get current configuration, but no configuration is loaded.");
             throw new HttpConfigurationException("No configuration set for: " + configClass.getSimpleName());
         }
+        logger.info("Returning current configuration.");
+        logger.trace("Current configuration: {}", configInstance.toString());
         return configInstance;
     }
 }

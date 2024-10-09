@@ -28,21 +28,27 @@ public class HttpServerApplication {
      * @param args command-line arguments; expects a single argument specifying the configuration file path.
      */
     public static void main(String[] args) {
-
-//		if (args.length != 1) {
-//			LOGGER.error("No configuration file provided.");
-//			LOGGER.error("Syntax:  java -jar simplehttpserver-1.0-SNAPSHOT.jar  <config.json>");
-//			return;
-//		}
-
-        LOGGER.info("Starting server...");
-
+    	
+    	LOGGER.info("Starting HTTP server application...");
+    	
+    	// Uncomment if you want to enforce configuration file path argument
+        /*
+        if (args.length != 1) {
+            LOGGER.error("No configuration file provided.");
+            LOGGER.error("Syntax: java -jar simplehttpserver-1.0-SNAPSHOT.jar <config.json>");
+            return;
+        }
+        */
+    	
         try {
+        	LOGGER.debug("Loading configuration files from the classpath.");
         	loadConfigurations();
         } catch (Exception e) {
             LOGGER.error("Failed to load configuration file: {}", e.getMessage());
+            LOGGER.debug("Exception details: ", e); // Log full exception stack trace for debugging
             return;
         }
+        
         HttpServerConfiguration config = ConfigurationManager.getInstance().getConfiguration(HttpServerConfiguration.class);
 
         LOGGER.info("Using HTTP Port: {}", config.getHttpPort());
@@ -59,8 +65,8 @@ public class HttpServerApplication {
             
             LOGGER.info("Server listener threads started successfully.");
         } catch (Exception e) {
-            // TODO Handle Later
-            LOGGER.error("Error starting server listener thread: {}", e.getMessage());
+        	LOGGER.error("Error starting server listener s: {}", e.getMessage());
+            LOGGER.debug("Exception details: ", e); // Log full exception stack trace for debugging
         }
     }
     
@@ -70,13 +76,18 @@ public class HttpServerApplication {
      * @throws IOException if configuration files are not found or can't be read.
      */
     private static void loadConfigurations() throws IOException {
-        ConfigurationManager.getInstance().loadConfiguration(
-            Objects.requireNonNull(HttpServerApplication.class.getClassLoader().getResource("http.json")).getFile(),
+        String httpServerConfigFilePath = Objects.requireNonNull(HttpServerApplication.class.getClassLoader().getResource("http.json")).getFile();
+		ConfigurationManager.getInstance().loadConfiguration(
+            httpServerConfigFilePath,
             HttpServerConfiguration.class
         );
+        LOGGER.debug("Http Server Configuration file loaded from path: {}", httpServerConfigFilePath);
+        
+        String sslConfigFilePath = Objects.requireNonNull(HttpServerApplication.class.getClassLoader().getResource("ssl-config.json")).getFile();
         ConfigurationManager.getInstance().loadConfiguration(
-            Objects.requireNonNull(HttpServerApplication.class.getClassLoader().getResource("ssl-config.json")).getFile(),
+            sslConfigFilePath,
             SSLConfiguration.class
         );
+        LOGGER.debug("SSL Configuration file loaded from path: {}", sslConfigFilePath);
     }
 }
