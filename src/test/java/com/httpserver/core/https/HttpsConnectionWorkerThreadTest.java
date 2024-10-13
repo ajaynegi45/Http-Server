@@ -1,5 +1,6 @@
 package com.httpserver.core.https;
 
+import com.httpserver.core.https.HttpsConnectionWorkerThread;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

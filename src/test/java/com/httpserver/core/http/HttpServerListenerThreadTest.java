@@ -3,7 +3,6 @@ package com.httpserver.core.http;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -19,9 +18,9 @@ public class HttpServerListenerThreadTest {
 
     @BeforeEach
     public void setUp() throws IOException {
-        serverSocket = Mockito.mock(ServerSocket.class);
-        clientSocket = Mockito.mock(Socket.class);
-        serverListener = new HttpServerListenerThread(8080, "/webroot") {
+        serverSocket = mock(ServerSocket.class);
+        clientSocket = mock(Socket.class);
+        serverListener = new HttpServerListenerThread(0, "/webroot") {
             @Override
             public void run() {
                 try {
@@ -35,10 +34,17 @@ public class HttpServerListenerThreadTest {
         };
     }
     @AfterEach
-    public void tearDown() throws IOException {
-        serverListener.interrupt();
-        serverSocket.close();
-        clientSocket.close();
+    public void tearDown() throws IOException, InterruptedException {
+        if (serverListener.isAlive()) {
+            serverListener.interrupt();
+        }
+        if (serverSocket != null && !serverSocket.isClosed()) {
+            serverSocket.close();
+        }
+        if (clientSocket != null && !clientSocket.isClosed()) {
+            clientSocket.close();
+        }
+        Thread.sleep(100);
     }
     @Test
     public void acceptConnection() throws IOException {
@@ -56,7 +62,6 @@ public class HttpServerListenerThreadTest {
 
         verify(serverSocket, times(1)).accept();
         verify(clientSocket, times(1)).getInetAddress();
-
     }
 
     @Test
