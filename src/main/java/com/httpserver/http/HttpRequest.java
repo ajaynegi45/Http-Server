@@ -2,13 +2,16 @@ package com.httpserver.http;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID; // Import for UUID generation
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import com.httpserver.exception.HttpParsingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import com.httpserver.utils.RateLimiterConfig;
 
 /**
  * Represents an HTTP request message, including the method, target, HTTP version,
@@ -17,6 +20,10 @@ import org.slf4j.LoggerFactory;
 public class HttpRequest extends HttpMessage {
 
     private static final Logger logger = LoggerFactory.getLogger(HttpRequest.class);
+
+
+    private static final int MAX_REQUESTS = RateLimiterConfig.getMaxRequests(); // Read from env
+    private static final long TIME_WINDOW_MS = RateLimiterConfig.getTimeWindowMs(); // Read from env
 
     private HttpMethod method;
     private String requestTarget;
@@ -28,8 +35,6 @@ public class HttpRequest extends HttpMessage {
     private final String requestId; // To store the request ID
 
     // Rate limiter properties
-    private static final int MAX_REQUESTS = 100; // Maximum requests allowed
-    private static final long TIME_WINDOW_MS = TimeUnit.MINUTES.toMillis(1); // Time window in milliseconds
     private static final Map<String, RateLimiter> rateLimiters = new ConcurrentHashMap<>(); // Store rate limiters for clients
 
     /**
@@ -159,12 +164,12 @@ public class HttpRequest extends HttpMessage {
                 '}';
     }
 
-    // Simple rate limiter class
+    // Simple rate limiter class using AtomicInteger
     private static class RateLimiter {
         private final int maxRequests;
         private final long timeWindow; // in milliseconds
         private long windowStartTime;
-        private int requestCount;
+        private final AtomicInteger requestCount;
 
         /**
          * Constructs a RateLimiter with the specified maximum number of requests
@@ -177,7 +182,7 @@ public class HttpRequest extends HttpMessage {
             this.maxRequests = maxRequests;
             this.timeWindow = timeWindow;
             this.windowStartTime = System.currentTimeMillis();
-            this.requestCount = 0;
+            this.requestCount = new AtomicInteger(0);
             logger.trace("RateLimiter initialized with maxRequests {} and timeWindow {}ms", maxRequests, timeWindow);
         }
 
@@ -186,7 +191,7 @@ public class HttpRequest extends HttpMessage {
          *
          * @return true if the request is allowed; false otherwise.
          */
-        synchronized boolean allowRequest() {
+        boolean allowRequest() {
             long currentTime = System.currentTimeMillis();
 
             // Check if the current time exceeds the time window
@@ -194,19 +199,19 @@ public class HttpRequest extends HttpMessage {
                 logger.trace("Time window expired, resetting request count for RateLimiter");
                 // Reset the count for the new time window
                 windowStartTime = currentTime;
-                requestCount = 1; // Reset count since we're allowing a new request
+                requestCount.set(1); // Reset count since we're allowing a new request
                 return true; // Allow the first request of the new window
             }
 
             // Allow the request if under the limit
-            if (requestCount < maxRequests) {
-                requestCount++;
-                logger.trace("Request allowed for client, requestCount = {} for RateLimiter", requestCount);
+            if (requestCount.get() < maxRequests) {
+                requestCount.incrementAndGet(); // Atomic increment
+                logger.trace("Request allowed for client, requestCount = {} for RateLimiter", requestCount.get());
                 return true; // Allow additional requests within the limit
             }
 
             // Rate limit exceeded
-            logger.warn("Rate limit exceeded for client. Request denied. Client has made {} requests in the current window, max allowed is {}.", requestCount, maxRequests);
+            logger.warn("Rate limit exceeded for client. Request denied. Client has made {} requests in the current window, max allowed is {}.", requestCount.get(), maxRequests);
             return false; // Deny request
         }
     }

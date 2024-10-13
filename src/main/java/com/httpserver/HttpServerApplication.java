@@ -82,7 +82,10 @@ public class HttpServerApplication {
             HttpServerConfiguration.class
         );
         LOGGER.debug("Http Server Configuration file loaded from path: {}", httpServerConfigFilePath);
-        
+
+        // To generate SSL Certificate
+        //  keytool -genkeypair -alias myserver -keyalg RSA -keysize 2048 -keystore keystore.jks -validity 365
+
         String sslConfigFilePath = Objects.requireNonNull(HttpServerApplication.class.getClassLoader().getResource("ssl-config.json")).getFile();
         ConfigurationManager.getInstance().loadConfiguration(
             sslConfigFilePath,
