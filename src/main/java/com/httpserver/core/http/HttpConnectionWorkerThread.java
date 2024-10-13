@@ -3,6 +3,12 @@ package com.httpserver.core.http;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.httpserver.http.HttpResponse;
+import com.httpserver.http.HttpStatusCode;
+import com.httpserver.http.HttpVersion;
+import com.httpserver.middleware.Middleware;
+import com.httpserver.middleware.SecurityHeadersMiddleware;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetAddress;
@@ -33,11 +39,12 @@ public class HttpConnectionWorkerThread extends Thread {
      * Runs the worker thread, handling the incoming HTTP request and sending a 
      * redirection response to the client.
      * <p>
-     * This method constructs an HTTP redirection response (301 Moved Permanently)
-     * and sends the client to the HTTPS version of the server. The response includes
-     * the IP address of the server and the HTTPS port (default 8043). It logs the 
-     * successful completion of the connection and handles any IOExceptions that may 
-     * occur during communication.
+     * The worker thread constructs an HTTP redirection response (301 Moved Permanently)
+     * to redirect the client to the HTTPS version of the server. The response includes
+     * the server's IP address and the default HTTPS port (8043). Additionally, security
+     * headers are applied to the response through the use of middleware, enhancing the 
+     * security of the connection. It logs the successful completion of the connection 
+     * and handles any IOExceptions that may occur during communication.
      * </p>
      *
      * @throws IOException if an I/O error occurs while writing to the socket
@@ -53,14 +60,22 @@ public class HttpConnectionWorkerThread extends Thread {
 
             final int httpsPort = 8043;
             
-            // CRLF = Carriage Return (\r) and Line Feed (\n)
-            final String CRLF = "\r\n";
-
-            // Constructing an HTTP response with a 301 redirect to HTTPS
-            String response = "HTTP/1.1 301 Moved Permanently" + CRLF 
-                    + "Location: https://" + InetAddress.getLocalHost().getHostAddress() + ":" + httpsPort + "/" + CRLF
-                    + "Connection: close" + CRLF + CRLF;
-
+            HttpResponse httpResponse = new HttpResponse();
+         	
+			httpResponse.setHttpVersion(HttpVersion.HTTP_1_1);
+            httpResponse.setStatusCode(HttpStatusCode.REDIRECTION_301_MOVED_PERMANENTLY);
+            
+            String redirectLocation = "https://" + InetAddress.getLocalHost().getHostAddress() + ":" + httpsPort + "/";
+            httpResponse.addHeader("Location", redirectLocation);
+            
+            Middleware middleware = new SecurityHeadersMiddleware();
+			middleware.apply(httpResponse);
+            
+            httpResponse.addHeader("Connection", "close"); 
+						
+			// Build the HTTP response
+			String response = httpResponse.buildResponse();
+			
             // Sending the response to the client
             outputStream.write(response.getBytes());
             
