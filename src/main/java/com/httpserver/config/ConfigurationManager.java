@@ -12,11 +12,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Manages the configuration settings for various types of configurations in the HTTP server.
+ * Manages the configuration settings for various components of the HTTP server.
  * <p>
- * This class follows the Singleton design pattern to ensure that only one instance of the 
- * ConfigurationManager exists throughout the application, allowing centralized management 
- * of configuration settings.
+ * This class implements the Singleton pattern to ensure only one instance of 
+ * ConfigurationManager is used throughout the server, providing centralized management
+ * of configurations. It allows for loading, storing, and retrieving configuration data.
+ * </p>
+ * <p>
+ * The configuration files are expected to be in JSON format, and they are mapped 
+ * to appropriate configuration objects.
  * </p>
  */
 public class ConfigurationManager {
@@ -27,14 +31,21 @@ public class ConfigurationManager {
 
     /**
      * Private constructor to prevent instantiation from outside the class.
-     * Initializes the ConfigurationManager instance.
+     * <p>
+     * The constructor initializes the logger and prevents the creation of multiple
+     * instances, ensuring the Singleton pattern is followed.
+     * </p>
      */
     private ConfigurationManager() {
     	logger.trace("ConfigurationManager constructor called.");
     }
 
     /**
-     * Retrieves the single instance of the ConfigurationManager.
+     * Retrieves the singleton instance of the ConfigurationManager.
+     * <p>
+     * If the instance does not already exist, it is created. Otherwise, the 
+     * existing instance is returned.
+     * </p>
      *
      * @return the singleton instance of ConfigurationManager
      */
@@ -49,15 +60,16 @@ public class ConfigurationManager {
     }
 
     /**
-     * Loads a configuration file for a specific configuration type.
+     * Loads a configuration file and maps it to a specified configuration class.
      * <p>
-     * This method reads the specified configuration file, parses it as JSON,
-     * and stores the resulting configuration object in the internal map.
+     * This method reads a configuration file from the provided file path, parses the file
+     * as JSON, and maps it to the specified configuration class. The resulting configuration
+     * object is stored internally for later retrieval.
      * </p>
      *
      * @param filePath the path to the configuration file to be loaded
-     * @param configClass the class type of the configuration to be loaded
-     * @param <T> the type of the configuration
+     * @param configClass the class type to map the configuration to
+     * @param <T> the type of the configuration class
      * @throws HttpConfigurationException if there is an error reading or parsing the configuration file
      */
     public <T> void loadConfiguration(String filePath, Class<T> configClass) {
@@ -70,7 +82,7 @@ public class ConfigurationManager {
             T configInstance = Json.fromJson(configJson, configClass);
             configurations.put(configClass, configInstance);
             
-            logger.info("Configuration successfully loaded into the current configuration.");
+            logger.info("Configuration successfully loaded.");
             logger.trace("Loaded configuration: {}", configInstance.toString());
         } catch (IOException e) {
         	logger.error("Error converting JSON to Configuration object", e);
@@ -79,15 +91,15 @@ public class ConfigurationManager {
     }
 
     /**
-     * Reads the contents of a file and returns it as a String.
+     * Reads the content of a file into a String.
      * <p>
-     * This method handles file reading and converts the contents of the file
-     * into a String. If an error occurs during reading, it throws an 
-     * HttpConfigurationException.
+     * This method reads the specified file from the file system and returns its 
+     * contents as a String. If an error occurs during the reading process, 
+     * an exception is thrown.
      * </p>
      *
      * @param filePath the path to the file to be read
-     * @return the contents of the file as a String
+     * @return the content of the file as a String
      * @throws HttpConfigurationException if an error occurs while reading the file
      */
     private String readFile(String filePath) {
@@ -106,14 +118,14 @@ public class ConfigurationManager {
     }
 
     /**
-     * Parses a JSON string and returns the corresponding JsonNode.
+     * Parses a JSON string into a JsonNode.
      * <p>
-     * This method takes a JSON string as input and parses it into a JsonNode.
-     * If parsing fails, it throws an HttpConfigurationException.
+     * This method takes a JSON string and parses it into a {@link JsonNode} object.
+     * If parsing fails, it throws an exception.
      * </p>
      *
      * @param jsonString the JSON string to be parsed
-     * @return the parsed JsonNode
+     * @return the parsed JsonNode representing the configuration
      * @throws HttpConfigurationException if there is an error while parsing the JSON
      */
     private JsonNode parseJson(String jsonString) {
@@ -121,7 +133,6 @@ public class ConfigurationManager {
             JsonNode config = Json.parse(jsonString);
             logger.info("Successfully parsed the configuration file into JSON.");
             logger.trace("Parsed JSON content: {}", jsonString);
-          
             return config;
         } catch (IOException e) {
         	logger.error("Error parsing the configuration file into JSON", e);
@@ -130,23 +141,22 @@ public class ConfigurationManager {
     }
 
     /**
-     * Retrieves the configuration of the specified type.
+     * Retrieves the configuration object for the specified class type.
      * <p>
-     * This method returns the configuration instance of the specified class type.
-     * If no configuration has been loaded for the specified type, it throws 
-     * an HttpConfigurationException.
+     * This method returns the loaded configuration object for the given class type. 
+     * If no configuration has been loaded for the specified class, an exception is thrown.
      * </p>
      *
-     * @param configClass the class type of the configuration
-     * @param <T> the type of the configuration
-     * @return the configuration instance
-     * @throws HttpConfigurationException if no configuration is set for the specified type
+     * @param configClass the class type of the configuration to retrieve
+     * @param <T> the type of the configuration class
+     * @return the loaded configuration object
+     * @throws HttpConfigurationException if no configuration is loaded for the specified class
      */
     @SuppressWarnings("unchecked")
     public <T> T getConfiguration(Class<T> configClass) {
         T configInstance = (T) configurations.get(configClass);
         if (configInstance == null) {
-            logger.warn("Attempted to get current configuration, but no configuration is loaded.");
+            logger.warn("Attempted to get configuration, but none is loaded.");
             throw new HttpConfigurationException("No configuration set for: " + configClass.getSimpleName());
         }
         logger.info("Returning current configuration.");

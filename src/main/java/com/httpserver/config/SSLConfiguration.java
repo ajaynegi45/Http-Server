@@ -48,7 +48,6 @@ public class SSLConfiguration {
      */
     public String getKeystorePath() {
         logger.debug("Retrieved keystore path: {}", keystorePath);
-        logger.trace("getKeystorePath() called, returning: {}", keystorePath);
         return keystorePath;
     }
 
@@ -60,7 +59,6 @@ public class SSLConfiguration {
     public void setKeystorePath(String keystorePath) {
         logger.info("Setting keystore path to: {}", keystorePath);
         this.keystorePath = keystorePath;
-        logger.trace("Keystore path set to: {}", keystorePath);
     }
 
     /**
@@ -70,7 +68,6 @@ public class SSLConfiguration {
      */
     public String getKeystorePassword() {
         logger.debug("Retrieved keystore password: [PROTECTED]");
-        logger.trace("getKeystorePassword() called, returning: [PROTECTED]");
         return keystorePassword;
     }
 
@@ -82,7 +79,6 @@ public class SSLConfiguration {
     public void setKeystorePassword(String keystorePassword) {
         logger.info("Setting keystore password.");
         this.keystorePassword = keystorePassword;
-        logger.trace("Keystore password set.");
     }
 
     /**
@@ -92,7 +88,6 @@ public class SSLConfiguration {
      */
     public String getKeyPassword() {
         logger.debug("Retrieved key password: [PROTECTED]");
-        logger.trace("getKeyPassword() called, returning: [PROTECTED]");
         return keyPassword;
     }
 
@@ -104,16 +99,19 @@ public class SSLConfiguration {
     public void setKeyPassword(String keyPassword) {
         logger.info("Setting key password.");
         this.keyPassword = keyPassword;
-        logger.trace("Key password set.");
     }
 
+    /**
+     * Provides a string representation of the SSL configuration settings.
+     *
+     * @return a string describing the SSL configuration
+     */
     @Override
     public String toString() {
-        String str = "SSLConfiguration{" +
+        return "SSLConfiguration{" +
                 "keystorePath='" + keystorePath + '\'' +
                 ", keystorePassword=[PROTECTED]" +
                 ", keyPassword=[PROTECTED]" +
                 '}';
-        return str;
     }
 }

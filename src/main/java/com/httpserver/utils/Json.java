@@ -11,7 +11,7 @@ import java.io.IOException;
  */
 public class Json {
 
-    private static ObjectMapper mapper = defaultObjectMapper();
+    private static ObjectMapper mapper = defaultObjectMapper(); // Default ObjectMapper instance for JSON operations
 
     /**
      * Creates a default ObjectMapper with specific configuration.
@@ -20,6 +20,7 @@ public class Json {
      */
     private static ObjectMapper defaultObjectMapper() {
         ObjectMapper mapper = new ObjectMapper();
+        // Configure the mapper to ignore unknown properties during deserialization
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         return mapper;
     }
@@ -33,7 +34,7 @@ public class Json {
      * @throws IOException if an I/O error occurs while reading the JSON
      */
     public static JsonNode parse(String jsonSrc) throws JsonProcessingException, IOException {
-        return mapper.readTree(jsonSrc);
+        return mapper.readTree(jsonSrc); // Parse the JSON string into a JsonNode
     }
 
     /**
@@ -47,7 +48,7 @@ public class Json {
      * @throws IOException if an I/O error occurs during conversion
      */
     public static <A> A fromJson(JsonNode node, Class<A> clazz) throws JsonProcessingException, IOException {
-        return mapper.convertValue(node, clazz);
+        return mapper.convertValue(node, clazz); // Convert the JsonNode to the specified object type
     }
 
     /**
@@ -57,7 +58,7 @@ public class Json {
      * @return a JsonNode representing the object
      */
     public static JsonNode toJson(Object obj) {
-        return mapper.valueToTree(obj);
+        return mapper.valueToTree(obj); // Convert the object to a JsonNode
     }
 
     /**
@@ -68,7 +69,7 @@ public class Json {
      * @throws JsonProcessingException if there is a problem processing the JSON
      */
     private static String stringify(JsonNode node) throws JsonProcessingException {
-        return generateJson(node, false);
+        return generateJson(node, false); // Generate a JSON string without pretty-printing
     }
 
     /**
@@ -79,7 +80,7 @@ public class Json {
      * @throws JsonProcessingException if there is a problem processing the JSON
      */
     private static String stringifyPretty(JsonNode node) throws JsonProcessingException {
-        return generateJson(node, true);
+        return generateJson(node, true); // Generate a JSON string with pretty-printing
     }
 
     /**
@@ -91,11 +92,12 @@ public class Json {
      * @throws JsonProcessingException if there is a problem processing the JSON
      */
     private static String generateJson(Object obj, boolean pretty) throws JsonProcessingException {
-        ObjectWriter writer = mapper.writer();
+        ObjectWriter writer = mapper.writer(); // Create a writer for the ObjectMapper
 
+        // Configure the writer to pretty-print the output if specified
         if (pretty) {
             writer = writer.with(SerializationFeature.INDENT_OUTPUT);
         }
-        return writer.writeValueAsString(obj);
+        return writer.writeValueAsString(obj); // Convert the object to a JSON string
     }
 }

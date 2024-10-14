@@ -9,10 +9,13 @@ import java.net.InetAddress;
 import java.net.Socket;
 
 /**
- * Represents a worker thread for handling HTTP connections. This class extends
- * Thread to manage communication between the server and a client over a given
- * socket, and it is responsible for handling the HTTP request and providing an
- * appropriate response, such as redirecting the client from HTTP to HTTPS.
+ * Represents a worker thread responsible for handling HTTP connections.
+ * This class extends {@link Thread} to manage communication between the
+ * server and a client over a specified socket.
+ * <p>
+ * The worker thread processes incoming HTTP requests and sends
+ * appropriate responses, such as redirecting the client from HTTP to HTTPS.
+ * </p>
  */
 public class HttpConnectionWorkerThread extends Thread {
     private final static Logger LOGGER = LoggerFactory.getLogger(HttpConnectionWorkerThread.class);
@@ -20,7 +23,7 @@ public class HttpConnectionWorkerThread extends Thread {
     private final Socket socket;
 
     /**
-     * Constructs an HttpConnectionWorkerThread with the specified socket.
+     * Constructs an {@code HttpConnectionWorkerThread} with the specified socket.
      *
      * @param socket the socket connected to the client
      */
@@ -30,29 +33,28 @@ public class HttpConnectionWorkerThread extends Thread {
     }
 
     /**
-     * Runs the worker thread, handling the incoming HTTP request and sending a 
+     * Executes the worker thread, handling the incoming HTTP request and sending a 
      * redirection response to the client.
      * <p>
      * This method constructs an HTTP redirection response (301 Moved Permanently)
-     * and sends the client to the HTTPS version of the server. The response includes
-     * the IP address of the server and the HTTPS port (default 8043). It logs the 
-     * successful completion of the connection and handles any IOExceptions that may 
-     * occur during communication.
+     * and instructs the client to access the HTTPS version of the server. The
+     * response includes the server's IP address and the default HTTPS port (8043).
+     * It logs the successful completion of the connection and manages any 
+     * {@link IOException} that may occur during communication.
      * </p>
      *
      * @throws IOException if an I/O error occurs while writing to the socket
      */
     @Override
     public void run() {
-    	LOGGER.debug("Handling connection from client: {}", socket.getInetAddress());
+        LOGGER.debug("Handling connection from client: {}", socket.getInetAddress());
 
         try (OutputStream outputStream = socket.getOutputStream()) {
-        	
-        	// Log that output stream have been successfully obtained
+            // Log that the output stream has been successfully obtained
             LOGGER.debug("Output stream obtained for socket: {}", socket);
 
             final int httpsPort = 8043;
-            
+
             // CRLF = Carriage Return (\r) and Line Feed (\n)
             final String CRLF = "\r\n";
 
@@ -68,7 +70,7 @@ public class HttpConnectionWorkerThread extends Thread {
             LOGGER.info("Connection completed with client: {}", socket.getInetAddress());
         } catch (IOException e) {
             LOGGER.error("IOException occurred while handling connection with client: {}", socket.getInetAddress(), e);
-        }  finally {
+        } finally {
             try {
                 socket.close();
                 LOGGER.debug("Socket closed for client: {}", socket.getInetAddress());

@@ -5,24 +5,26 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Represents the configuration settings for the HTTP and HTTPS server.
- * This class holds the server's port numbers for HTTP and HTTPS, and 
- * the web root directory for serving files.
+ * <p>
+ * This class holds the server's port numbers for HTTP and HTTPS, as well
+ * as the web root directory for serving static files.
+ * </p>
  */
 public class HttpServerConfiguration {
 
-	private static final Logger logger = LoggerFactory.getLogger(HttpServerConfiguration.class); // SLF4J logger instance
-	
+    private static final Logger logger = LoggerFactory.getLogger(HttpServerConfiguration.class); // SLF4J logger instance
+    
     private int httpPort;
     private int httpsPort;
     private String webroot;
 
     /**
-     * Default constructor for creating a Configuration object
+     * Default constructor for creating a configuration object
      * with default values.
      */
     public HttpServerConfiguration() { 
-    	logger.info("Created a new HttpServerConfiguration object with default values.");
-    	logger.trace("Default HttpServerConfiguration constructor invoked.");
+        logger.info("Created a new HttpServerConfiguration object with default values.");
+        logger.trace("Default HttpServerConfiguration constructor invoked.");
     }
 
     /**
@@ -37,8 +39,7 @@ public class HttpServerConfiguration {
         this.httpPort = httpPort;
         this.httpsPort = httpsPort;
         this.webroot = webroot;
-        logger.info("Created a new HttpServerConfiguration object with http port: {}, https port {} and webroot: {}", httpPort, httpsPort, webroot);
-        logger.trace("HttpServerConfiguration object initialized with http port: {}, https port {} and webroot {}", httpPort, httpsPort, webroot);
+        logger.info("Created HttpServerConfiguration with httpPort: {}, httpsPort: {}, and webroot: {}", httpPort, httpsPort, webroot);
     }
 
     /**
@@ -47,8 +48,7 @@ public class HttpServerConfiguration {
      * @return the HTTP port number
      */
     public int getHttpPort() {
-    	logger.debug("Retrieved http port: {}", httpPort);
-        logger.trace("getHttpPort() called, returning: {}", httpPort);
+        logger.debug("Retrieved HTTP port: {}", httpPort);
         return httpPort;
     }
 
@@ -58,9 +58,8 @@ public class HttpServerConfiguration {
      * @param httpPort the HTTP port number to set
      */
     public void setHttpPort(int httpPort) { 
-    	logger.info("Setting http port to: {}", httpPort);    
+        logger.info("Setting HTTP port to: {}", httpPort);    
         this.httpPort = httpPort;
-        logger.trace("Http port set to: {}", httpPort);
     }
 
     /**
@@ -69,8 +68,7 @@ public class HttpServerConfiguration {
      * @return the HTTPS port number
      */
     public int getHttpsPort() {
-    	logger.debug("Retrieved https port: {}", httpsPort);
-        logger.trace("getHttpsPort() called, returning: {}", httpsPort);
+        logger.debug("Retrieved HTTPS port: {}", httpsPort);
         return httpsPort;
     }
 
@@ -80,9 +78,8 @@ public class HttpServerConfiguration {
      * @param httpsPort the HTTPS port number to set
      */
     public void setHttpsPort(int httpsPort) {
-    	logger.info("Setting https port to: {}", httpsPort);    
+        logger.info("Setting HTTPS port to: {}", httpsPort);    
         this.httpsPort = httpsPort;
-        logger.trace("Https port set to: {}", httpsPort);
     }
 
     /**
@@ -91,8 +88,7 @@ public class HttpServerConfiguration {
      * @return the web root directory
      */
     public String getWebroot() {
-    	logger.debug("Retrieved webroot: {}", webroot);
-        logger.trace("getWebroot() called, returning: {}", webroot);
+        logger.debug("Retrieved webroot: {}", webroot);
         return webroot;
     }
 
@@ -102,16 +98,20 @@ public class HttpServerConfiguration {
      * @param webroot the web root directory to set
      */
     public void setWebroot(String webroot) {
-    	logger.info("Setting webroot to: {}", webroot);
+        logger.info("Setting webroot to: {}", webroot);
         this.webroot = webroot;
-        logger.trace("Webroot set to: {}", webroot);
     }
-    
+
+    /**
+     * Provides a string representation of the configuration settings.
+     *
+     * @return a string describing the configuration
+     */
     @Override
     public String toString() {
         return "HttpServerConfiguration{" +
                 "httpPort=" + httpPort +
-                ", httpsPort="+ httpsPort +
+                ", httpsPort=" + httpsPort +
                 ", webroot='" + webroot + '\'' +
                 '}';
     }
