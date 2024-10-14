@@ -7,6 +7,7 @@ public class HttpStatusCodeTest {
 
     @Test
     public void testHttpStatusCodeValues() {
+
         // Test SUCCESS CODES
         assertEquals(200, HttpStatusCode.SUCCESS_200_OK.STATUS_CODE);
         assertEquals("OK", HttpStatusCode.SUCCESS_200_OK.MESSAGE);
