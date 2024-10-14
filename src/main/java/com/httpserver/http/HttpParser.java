@@ -86,7 +86,7 @@ public class HttpParser {
                     }
                     methodParsed = true;
                 } else if (!requestTargetParsed) {
-                    if (processingDataBuffer.length() == 0) {
+                    if (processingDataBuffer.isEmpty()) {
                         LOGGER.error("Empty Request Target found.");
                         throw new HttpParsingException(HttpStatusCode.CLIENT_ERROR_400_BAD_REQUEST);
                     }

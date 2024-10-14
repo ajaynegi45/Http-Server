@@ -11,7 +11,7 @@ public class HttpResponse {
     private HttpStatusCode statusCode;
     private HttpVersion httpVersion;
     private String body;
-    private Map<String, String> headers;
+    private final Map<String, String> headers;
 
     /**
      * Constructs an empty HttpResponse with default settings.
@@ -91,7 +91,10 @@ public class HttpResponse {
      * @return The complete HTTP response as a formatted string.
      */
     public String buildResponse() {
+
+        // CRLF = Carriage Return (\r) and Line Feed (\n)
         String CRLF = "\r\n";
+
         StringBuilder response = new StringBuilder();
 
         // Status line
