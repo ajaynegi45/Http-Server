@@ -27,7 +27,10 @@ public enum HttpStatusCode {
     SERVER_ERROR_502_BAD_GATEWAY(502, "Bad Gateway"),
     SERVER_ERROR_503_SERVICE_UNAVAILABLE(503, "Service Unavailable"),
     SERVER_ERROR_504_GATEWAY_TIMEOUT(504, "Gateway Timeout"),
-    SERVER_ERROR_505_HTTP_VERSION_NOT_SUPPORTED(505, "HTTP Version Not Supported");
+    SERVER_ERROR_505_HTTP_VERSION_NOT_SUPPORTED(505, "HTTP Version Not Supported"),
+	
+	/* --- REDIRECTION CODES --- */
+	REDIRECTION_301_MOVED_PERMANENTLY(301, "Moved Permanently");
 
     /** The numeric status code. */
     public final int STATUS_CODE;

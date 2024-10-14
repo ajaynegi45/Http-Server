@@ -3,6 +3,12 @@ package com.httpserver.core.https;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.httpserver.http.HttpResponse;
+import com.httpserver.http.HttpStatusCode;
+import com.httpserver.http.HttpVersion;
+import com.httpserver.middleware.Middleware;
+import com.httpserver.middleware.SecurityHeadersMiddleware;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -32,14 +38,21 @@ public class HttpsConnectionWorkerThread extends Thread {
 	 * Runs the worker thread, handling incoming HTTPS requests and sending
 	 * responses.
 	 * <p>
-	 * This method reads data from the input stream of the socket, processes the
-	 * HTTPS request, and writes a simple HTML response back to the client. It logs
-	 * the completion of the connection and handles any IOExceptions that may occur
-	 * during communication.
+	 * This method performs the following steps:
+	 * 1. Reads data from the input stream of the socket.
+	 * 2. Creates an {@link HttpResponse} object representing the HTTP response.
+	 * 3. Sets the HTTP version, status code, headers, and body content for the response.
+	 * 4. Applies security headers using a middleware implementation (e.g., {@link SecurityHeadersMiddleware}).
+	 * 5. Builds the full HTTP response (including status line, headers, and body).
+	 * 6. Writes the constructed HTTP response to the output stream, sending it back to the client.
+	 * 7. Logs the completion of the connection, and closes the socket.
+	 * </p>
+	 * <p>
+	 * This method also handles and logs any {@link IOException} that may occur during 
+	 * communication, such as reading from or writing to the socket, or closing the socket.
 	 * </p>
 	 *
-	 * @throws IOException if an I/O error occurs while reading from or writing to
-	 *                     the socket
+	 * @throws IOException if an I/O error occurs while reading from or writing to the socket
 	 */
 	@Override
 	public void run() {
@@ -62,16 +75,22 @@ public class HttpsConnectionWorkerThread extends Thread {
 //			String request = requestBuilder.toString();
 //			LOGGER.debug("Received request: {}", request);
 
-			// Create a simple HTML response
-			String html = "<html><head><title>Simple Java HTTPS Server</title></head><body>This page was served using Java</body></html>";
-
-			// CRLF = Carriage Return (\r) and Line Feed (\n)
-			final String CRLF = "\r\n"; // 10 , 13 ASCII CODE
+			// Create a HTML response
+			
+			HttpResponse httpResponse = new HttpResponse();
+			
+			httpResponse.setHttpVersion(HttpVersion.HTTP_1_1);
+			httpResponse.setStatusCode(HttpStatusCode.SUCCESS_200_OK);
+			httpResponse.setBody("<html><head><title>Simple Java HTTPS Server</title></head><body>This page was served using Java</body></html>");
+			
+			httpResponse.addHeader("Content-Type", "text/html");
+			httpResponse.addHeader("Content-Length", String.valueOf(httpResponse.getBody().getBytes().length));
+			
+			Middleware middleware = new SecurityHeadersMiddleware();
+			middleware.apply(httpResponse);
 
 			// Build the HTTP response
-			String response = "HTTP/1.1 200 OK" + CRLF // HTTP_VERSION RESPONSE_CODE RESPONSE_MESSAGE
-					+ "Content-Length: " + html.getBytes().length + CRLF // HEADER
-					+ CRLF + html + CRLF + CRLF;
+			String response = httpResponse.buildResponse();
 
 			// Write the response to the output stream
 			outputStream.write(response.getBytes());
