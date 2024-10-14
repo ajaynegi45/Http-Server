@@ -44,6 +44,24 @@ public class HttpsServerListenerThread extends Thread {
 		this.serverSocket = createSSLServerSocket();
 		LOGGER.debug("HTTPS - Server initialized on port: {} with webroot: {}", this.port, this.webroot);
 	}
+	
+	/**
+	 * Returns the port number of HTTPS Server.
+	 *
+	 * @return the port number
+	 */
+    public int getPort() {
+        return port;
+    }
+
+    /**
+	 * Returns the web root directory for serving files.
+	 *
+	 * @return the web root directory
+	 */
+    public String getWebroot() {
+        return webroot;
+    }
 
 	/**
 	 * Creates and initializes the SSLServerSocket based on the SSL configuration.
@@ -52,7 +70,7 @@ public class HttpsServerListenerThread extends Thread {
 	 * @throws Exception if an error occurs while loading the keystore or
 	 *                   initializing the socket
 	 */
-	private SSLServerSocket createSSLServerSocket() throws Exception {
+	 SSLServerSocket createSSLServerSocket() throws Exception {
 	    LOGGER.info("Initializing SSL server socket...");
 
 		SSLConfiguration sslConfig = ConfigurationManager.getInstance().getConfiguration(SSLConfiguration.class);
