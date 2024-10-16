@@ -11,7 +11,7 @@ import java.io.IOException;
  */
 public class Json {
 
-    private static ObjectMapper mapper = defaultObjectMapper();
+    private static final ObjectMapper mapper = defaultObjectMapper();
 
     /**
      * Creates a default ObjectMapper with specific configuration.
