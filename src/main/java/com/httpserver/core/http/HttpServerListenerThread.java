@@ -33,6 +33,24 @@ public class HttpServerListenerThread extends Thread {
 		this.serverSocket = new ServerSocket(this.port);
 		LOGGER.debug("HTTP - Server initialized on port: {} with webroot: {}", this.port, this.webroot);
 	}
+	
+	/**
+	 * Returns the port number of HTTP Server.
+	 *
+	 * @return the port number
+	 */
+    public int getPort() {
+        return port;
+    }
+
+    /**
+	 * Returns the web root directory for serving files.
+	 *
+	 * @return the web root directory
+	 */
+    public String getWebroot() {
+        return webroot;
+    }
 
 	/**
 	 * Runs the server listener thread, accepting incoming connections and spawning
