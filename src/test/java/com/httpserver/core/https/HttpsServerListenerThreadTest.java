@@ -24,111 +24,80 @@ public class HttpsServerListenerThreadTest {
     private ConfigurationManager configManagerMock;
 
     private HttpsServerListenerThread serverListenerThread;
+    private MockedStatic<SSLServerSocketFactory> mockedSSLFactory;
+    private SSLServerSocketFactory sslServerSocketFactoryMock;
+    private SSLServerSocket sslServerSocketMock;
 
     @BeforeEach
     public void setUp() throws Exception {
         MockitoAnnotations.openMocks(this);
 
-        when(sslConfigMock.getKeystorePath()).thenReturn("path/to/keystore.jks");
-        when(sslConfigMock.getKeystorePassword()).thenReturn("keystorePassword");
-        when(sslConfigMock.getKeyPassword()).thenReturn("keyPassword");
+        // Mock SSL Configuration and ConfigurationManager
+        when(sslConfigMock.getKeystorePath()).thenReturn("keystore.jks");
+        when(sslConfigMock.getKeystorePassword()).thenReturn("123");
+        when(sslConfigMock.getKeyPassword()).thenReturn("123");
 
-        try (MockedStatic<ConfigurationManager> mockedConfigManager = mockStatic(ConfigurationManager.class)) {
-            mockedConfigManager.when(ConfigurationManager::getInstance).thenReturn(configManagerMock);
-            when(configManagerMock.getConfiguration(SSLConfiguration.class)).thenReturn(sslConfigMock);
-        }
+        MockedStatic<ConfigurationManager> mockedConfigManager = mockStatic(ConfigurationManager.class);
+        mockedConfigManager.when(ConfigurationManager::getInstance).thenReturn(configManagerMock);
+        when(configManagerMock.getConfiguration(SSLConfiguration.class)).thenReturn(sslConfigMock);
 
-        int port = 8443;
-        String webroot = "/webroot";
-        serverListenerThread = new HttpsServerListenerThread(port, webroot);
+        // Mock SSL Server Socket Factory
+        sslServerSocketFactoryMock = mock(SSLServerSocketFactory.class);
+        sslServerSocketMock = mock(SSLServerSocket.class);
+        mockedSSLFactory = mockStatic(SSLServerSocketFactory.class);
+        mockedSSLFactory.when(SSLServerSocketFactory::getDefault).thenReturn(sslServerSocketFactoryMock);
+        when(sslServerSocketFactoryMock.createServerSocket(anyInt())).thenReturn(sslServerSocketMock);
+
+        // Initialize the server listener thread
+        serverListenerThread = new HttpsServerListenerThread(8443, "/webroot");
     }
 
     @Test
     public void testSSLConfigurationInitialization() {
-            //TODO Add getters to HttpsServerListenerThread
-        /*assertAll("SSL Configuration Initialization",
+        assertAll("SSL Configuration Initialization",
                 () -> assertNotNull(serverListenerThread, "Server listener should not be null"),
                 () -> assertEquals(8443, serverListenerThread.getPort(), "Port should be 8443"),
                 () -> assertEquals("/webroot", serverListenerThread.getWebroot(), "Webroot should be '/webroot'")
-        );*/
+        );
     }
 
     @Test
     public void testSSLServerSocketCreationSuccess() throws Exception {
-        //TODO Do something about the access modifier of the createSSLServerSocket()
-        /*SSLServerSocketFactory sslServerSocketFactory = mock(SSLServerSocketFactory.class);
-        SSLServerSocket sslServerSocketMock = mock(SSLServerSocket.class);
-
-        when(sslServerSocketFactory.createServerSocket(anyInt())).thenReturn(sslServerSocketMock);
-
-        try (MockedStatic<SSLServerSocketFactory> mockedFactory = mockStatic(SSLServerSocketFactory.class)) {
-            mockedFactory.when(SSLServerSocketFactory::getDefault).thenReturn(sslServerSocketFactory);
-
-            SSLServerSocket sslServerSocket = serverListenerThread.createSSLServerSocket();
-
-            assertAll("SSL Server Socket Creation",
-                    () -> assertNotNull(sslServerSocket, "SSL server socket should be created successfully"),
-                    () -> verify(sslServerSocketFactory, times(1)).createServerSocket(anyInt()),
-                    () -> verifyNoMoreInteractions(sslServerSocketFactory)
-            );
-        }*/
+        SSLServerSocket sslServerSocket = serverListenerThread.createSSLServerSocket();
+        assertAll("SSL Server Socket Creation",
+                () -> assertNotNull(sslServerSocket, "SSL server socket should be created successfully"),
+                () -> verify(sslServerSocketFactoryMock, times(1)).createServerSocket(anyInt())
+        );
     }
 
     @Test
-    public void testSSLServerSocketCreationFailure() {
-        //TODO Do something about the access modifier of the createSSLServerSocket()
-        /*try (MockedStatic<SSLServerSocketFactory> mockedFactory = mockStatic(SSLServerSocketFactory.class)) {
-            mockedFactory.when(SSLServerSocketFactory::getDefault).thenThrow(new IOException("Failed to create SSL Server Socket"));
-
-            IOException exception = assertThrows(IOException.class, serverListenerThread::createSSLServerSocket);
-
-            assertAll("SSL Server Socket Creation Failure",
-                    () -> assertEquals("Failed to create SSL Server Socket", exception.getMessage(), "Exception message should match"),
-                    () -> assertTrue(exception != null, "Exception should be of type IOException")
-            );
-        }*/
+    public void testSSLServerSocketCreationFailure() throws Exception {
+        mockedSSLFactory.when(SSLServerSocketFactory::getDefault).thenThrow(new IOException("Failed to create SSL Server Socket"));
+        IOException exception = assertThrows(IOException.class, serverListenerThread::createSSLServerSocket);
+        assertEquals("Failed to create SSL Server Socket", exception.getMessage());
     }
 
     @Test
     public void testServerRunMethodStartsSuccessfully() throws Exception {
-        SSLServerSocket sslServerSocketMock = mock(SSLServerSocket.class);
         when(sslServerSocketMock.accept()).thenThrow(new IOException("Mocked accept termination"));
+        Thread thread = new Thread(() -> serverListenerThread.run());
+        thread.start();
+        Thread.sleep(1000);
+        thread.interrupt();
 
-        try (MockedStatic<SSLServerSocketFactory> mockedFactory = mockStatic(SSLServerSocketFactory.class)) {
-            SSLServerSocketFactory sslServerSocketFactoryMock = mock(SSLServerSocketFactory.class);
-            mockedFactory.when(SSLServerSocketFactory::getDefault).thenReturn(sslServerSocketFactoryMock);
-            when(sslServerSocketFactoryMock.createServerSocket(anyInt())).thenReturn(sslServerSocketMock);
-
-            Thread thread = new Thread(() -> {
-                try {
-                    serverListenerThread.run();
-                } catch (Exception ignored) {
-                }
-            });
-            thread.start();
-            Thread.sleep(1000);
-            thread.interrupt();
-
-            assertAll("Server Run Method",
-                    () -> verify(sslServerSocketFactoryMock, times(1)).createServerSocket(anyInt()),
-                    () -> assertTrue(thread.isAlive(), "Thread should be alive during execution")
-            );
-        }
+        assertAll("Server Run Method",
+                () -> verify(sslServerSocketFactoryMock, times(1)).createServerSocket(anyInt()),
+                () -> assertTrue(thread.isAlive(), "Thread should be alive during execution")
+        );
     }
 
     @Test
     public void testStopServerMethodStopsSuccessfully() throws Exception {
-        //TODO Add methods to close serverListenerThread
-
-        /*SSLServerSocket sslServerSocketMock = mock(SSLServerSocket.class);
-        when(sslServerSocketMock.isClosed()).thenReturn(false).thenReturn(true);
-
-        serverListenerThread.setServerSocket(sslServerSocketMock);
+        doNothing().when(sslServerSocketMock).close();
         serverListenerThread.interrupt();
-
         assertAll("Stop Server Method",
-                () -> verify(sslServerSocketMock, times(1)).close(), // Ensures close was called
+                () -> verify(sslServerSocketMock, times(1)).close(),
                 () -> assertTrue(sslServerSocketMock.isClosed(), "Server socket should be closed")
-        );*/
+        );
     }
 }

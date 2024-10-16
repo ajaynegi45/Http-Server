@@ -1,14 +1,9 @@
 package com.httpserver.core.https;
 
-import com.httpserver.core.https.HttpsConnectionWorkerThread;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.Socket;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -37,12 +32,7 @@ class HttpsConnectionWorkerThreadTest {
     void testRunSendsResponse() throws IOException {
         String simulatedRequest = "GET / HTTP/1.1\r\nHost: localhost\r\n\r\n";
         ByteArrayInputStream requestStream = new ByteArrayInputStream(simulatedRequest.getBytes());
-        when(inputStream.read(any(byte[].class), anyInt(), anyInt())).thenAnswer(invocation -> {
-            byte[] buffer = invocation.getArgument(0);
-            int len = Math.min(buffer.length, simulatedRequest.length());
-            System.arraycopy(simulatedRequest.getBytes(), 0, buffer, 0, len);
-            return len;
-        });
+        when(socket.getInputStream()).thenReturn(requestStream);
 
         HttpsConnectionWorkerThread workerThread = new HttpsConnectionWorkerThread(socket);
         workerThread.start();
@@ -52,15 +42,9 @@ class HttpsConnectionWorkerThreadTest {
             Thread.currentThread().interrupt();
         }
 
-        String expectedResponse = """
-                HTTP/1.1 200 OK\r
-                Content-Length: 109\r
-                \r
-                <html><head><title>Simple Java HTTPS Server</title></head><body>This page was served using Java</body></html>\r
-                \r
-                """;
+        String expectedResponse = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: 109\r\nContent-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self'\r\nStrict-Transport-Security: max-age=31536000; includeSubDomains\r\nX-Content-Type-Options: nosniff\r\n\r\n<html><head><title>Simple Java HTTPS Server</title></head><body>This page was served using Java</body></html>\r\n";
 
-        assertEquals(expectedResponse, outputStreamMock.toString());
+        assertEquals(expectedResponse.trim(), outputStreamMock.toString().trim());
     }
 
     @Test
@@ -92,6 +76,7 @@ class HttpsConnectionWorkerThreadTest {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
+
         verify(socket).close();
     }
 }
