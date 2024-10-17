@@ -99,7 +99,6 @@ class HttpRequestTest {
         assertEquals(bodyContent, httpRequest.getBody());
     }
 
-    // New tests for rate limiter
 
     @Test
     void testIsRequestAllowed_WithinLimit() {
@@ -117,5 +116,32 @@ class HttpRequestTest {
         }
         assertFalse(httpRequest.isRequestAllowed(clientId), "Request should be denied after exceeding limit");
     }
+
+    @Test
+    void testGetTraceId() {
+        assertNotNull(httpRequest.getTraceId(), "Trace ID should not be null");
+    }
+
+    @Test
+    void testGetRequestId() {
+        assertNotNull(httpRequest.getRequestId(), "Request ID should not be null");
+    }
+
+    @Test
+    void testAddHeaderInvalidHeader() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            httpRequest.addHeader(null, "application/json");
+        }, "Header name must not be null");
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            httpRequest.addHeader("Content-Type", null);
+        }, "Header value must not be null");
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            httpRequest.addHeader("", "application/json");
+        }, "Header name must not be empty");
+    }
+
+
 
 }
