@@ -24,16 +24,12 @@ Our primary goal is to keep this server lightweight and efficient, ensuring mini
 
 - The server is built using a  **multi-threaded architecture** , which allows it to handle multiple tasks simultaneously. In simpler terms, think of multi-threading as having multiple "workers" available to take on different tasks at the same time. Each incoming request is assigned to a separate thread (a lightweight unit of a program), enabling the server to manage multiple requests at once without waiting for one task to finish before starting another.
 
-* **Why is this important?** If the server could only handle one request at a time, users would experience delays whenever multiple people tried to access it. Multi-threading ensures that each request is processed in parallel, resulting in a smoother and faster user experience.
-* **How does it work in the server?** When a new request comes in, the server creates a new thread specifically for that request. This thread parses the request, performs the necessary processing, and sends back a response, all without affecting other requests being processed at the same time.
-
 ### Lightweight Design
 
 The server's **lightweight** nature means it is designed to be minimalistic and focused. This project deliberately avoids using heavy frameworks or libraries that can make the code more complex and difficult to understand for beginners.
 
 * **Minimal Dependencies:** There are no unnecessary external libraries or frameworks used in the server. This makes it easier to set up, understand, and maintain. It also reduces the memory and processing power required to run the server, making it ideal for situations where resources are limited.
 * **Simplified Codebase:** The code is written in a straightforward manner, focusing on core functionality without added complexity. This is helpful for newcomers who want to understand the fundamentals of how an HTTP server operates without being overwhelmed by advanced or abstract concepts.
-* **Practical Implication:** Being lightweight doesn’t mean lacking features; instead, it means that only essential features are included. You can easily add new features or integrate libraries if needed, but the server remains functional even in its simplest form.
 
 ### Highly Scalable
 
@@ -41,7 +37,6 @@ The server is designed to be  **highly scalable** , meaning it can handle an inc
 
 * **What is Scalability?** Scalability refers to the ability of a system to accommodate growing amounts of work or an increasing number of users. In this server, scalability is achieved through efficient use of resources, such as memory and processor time, as well as through the multi-threaded architecture that allows for parallel request processing.
 * **Handling Large Numbers of Connections:** As the number of users or devices sending requests to the server increases, the server’s design ensures that it can continue to process these requests efficiently. The multi-threaded approach, combined with optimized algorithms for handling requests, helps maintain a smooth user experience even under heavy load.
-* **Real-World Example:** Think about popular websites or online services that experience a sudden surge in traffic (e.g., during a big online sale). The server's ability to scale means it can continue to function properly without crashing or slowing down, which is critical for maintaining user satisfaction.
 
 ### Secure
 
@@ -49,7 +44,6 @@ The server is designed to be  **highly scalable** , meaning it can handle an inc
 
 * **Basic Security Features:** The server includes mechanisms for validating incoming requests to ensure they follow the correct structure and meet certain criteria before being processed. This helps prevent malicious or malformed requests from causing issues.
 * **Preventing Common Vulnerabilities:** Security features such as input validation, error handling, and secure connection handling are built into the core server design. These practices protect against common web security issues, such as injection attacks or buffer overflows.
-* **Learning Opportunity:** For beginners, this server offers an introduction to web security concepts. You can explore how to improve the server’s security, learn about different types of web vulnerabilities, and see how real-world servers handle security challenges.
 
 ### Customizable
 
@@ -58,7 +52,6 @@ The server's codebase is designed to be  **customizable** , making it easy for d
 * **Adding New Features:** You can easily introduce new HTTP methods (like PATCH) or add custom request handlers for specific types of data processing. The server's modular design allows you to make these changes without altering the core components, ensuring that the basic functionality remains intact.
 * **Modifying Request Handling:** If you need special processing for certain types of requests, the server's architecture allows you to tweak the way requests are handled. For example, you could add custom headers, implement authentication checks, or change the response format to suit your application's requirements.
 * **Flexible Integration:** The server can be adapted to work with various back-end services, databases, or third-party APIs. This makes it suitable for different use cases, from educational projects to real-world applications.
-* **Why is this important for beginners?** Customization teaches you how to extend and modify existing codebases, which is a valuable skill in software development. Understanding how to adapt a server to meet specific requirements can help you tackle real-world programming tasks more effectively.
 
 ## Core Components
 
@@ -77,7 +70,6 @@ The **Configuration** component plays a crucial role in managing the server's cu
    * The **web root directory** specifies the base folder from which the server serves static files (such as HTML, CSS, images, and JavaScript files).
    * This directory is essential for delivering web content to clients. It can be configured to point to different folders, enabling a flexible file structure.
    * You can set the web root to a specific directory path through the `Configuration` class, which allows for different setups based on the deployment environment.
-   * **Example Use Case:** In a development environment, the web root might point to a folder containing development files, while in production, it could be set to a folder containing optimized and minified versions of the web assets.
 
 #### Why Is Configuration Important?
 
@@ -211,41 +203,6 @@ HEAD /files/report.pdf HTTP/1.1
 Host: example.com
 ```
 
-#### 6. **Other Supported Methods**
-
-* **CONNECT** :
-* **Purpose** : Used for creating a network connection to a specified resource, often used for setting up a tunnel (e.g., through a proxy).
-* **Example** : Establishing a connection for HTTPS through a proxy.
-  ```sql
-  CONNECT server.example.com:443 HTTP/1.1
-  ```
-* **OPTIONS** :
-* **Purpose** : Provides information about the communication options available for a particular resource or the server in general. It is often used for CORS (Cross-Origin Resource Sharing) checks.
-* **Example** : Determining allowed methods for a resource.
-* ```bash
-  OPTIONS /users/123 HTTP/1.1
-  Host: example.com
-  ```
-* **TRACE** :
-* **Purpose** : Echoes back the received request, primarily used for debugging purposes.
-* **Example** : Echoing a request to troubleshoot a problem.
-  ```bash
-  TRACE /debug HTTP/1.1
-  Host: example.com
-  ```
-* **PATCH** :
-* **Purpose** : Used to apply partial updates to a resource, unlike `PUT`, which typically replaces the whole resource.
-* **Example** : Updating just the email address of a user.
-  ```bash
-  PATCH /users/123 HTTP/1.1
-  Host: example.com
-  Content-Type: application/json
-
-  {
-    "email": "newemail@example.com"
-  }
-  ```
-
 ### Flow Diagram
 
 ## How It Works
@@ -297,8 +254,6 @@ The HTTP server operates by continuously listening for incoming connections on a
 * **Details** : It encapsulates the HTTP method, headers, body content, and version information. This object-oriented design allows for easy access and manipulation of request data throughout the processing lifecycle.
 
 <img src="https://github.com/ajaynegi45/Http-Server/blob/main/project-structure/httpserver.png" height="500px" alt="Diagram" />
-
--
 
 # How to Contribute to This Project
 
