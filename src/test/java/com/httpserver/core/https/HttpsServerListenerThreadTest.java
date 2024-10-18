@@ -82,8 +82,8 @@ public class HttpsServerListenerThreadTest {
 
     @Test
     public void testSSLServerSocketCreationFailure() throws RuntimeException {
-        mockedSSLFactory.when(SSLServerSocketFactory::getDefault).thenThrow(new IOException("Failed to create SSL Server Socket"));
-        IOException exception = assertThrows(IOException.class, serverListenerThread::createSSLServerSocket);
+        mockedSSLFactory.when(SSLServerSocketFactory::getDefault).thenThrow(new RuntimeException("Failed to create SSL Server Socket"));
+        RuntimeException exception = assertThrows(RuntimeException.class, serverListenerThread::createSSLServerSocket);
         assertEquals("Failed to create SSL Server Socket", exception.getMessage());
     }
 
