@@ -1,17 +1,14 @@
 package com.httpserver.http;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import com.httpserver.exception.HttpParsingException;
 import org.slf4j.Logger;
+import java.util.HashMap;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.concurrent.ConcurrentHashMap;
 import com.httpserver.utils.RateLimiterConfig;
+import java.util.concurrent.atomic.AtomicInteger;
+import com.httpserver.exception.HttpParsingException;
 
 /**
  * Represents an HTTP request message, including the method, target, HTTP version,
@@ -20,7 +17,6 @@ import com.httpserver.utils.RateLimiterConfig;
 public class HttpRequest extends HttpMessage {
 
     private static final Logger logger = LoggerFactory.getLogger(HttpRequest.class);
-
 
     private static final int MAX_REQUESTS = RateLimiterConfig.getMaxRequests(); // Read from env
     private static final long TIME_WINDOW_MS = RateLimiterConfig.getTimeWindowMs(); // Read from env
@@ -48,6 +44,7 @@ public class HttpRequest extends HttpMessage {
     }
 
     // Rate limiter logic
+
     /**
      * Checks if a request is allowed for the given client ID based on the rate limiter.
      *
@@ -63,7 +60,6 @@ public class HttpRequest extends HttpMessage {
     }
 
     // Getters and setters
-
     public HttpMethod getMethod() {
         return method;
     }
@@ -88,6 +84,7 @@ public class HttpRequest extends HttpMessage {
         return body;
     }
 
+
     /**
      * Gets the trace ID for the request.
      *
@@ -105,6 +102,7 @@ public class HttpRequest extends HttpMessage {
     public String getRequestId() {
         return requestId;
     }
+
 
     // Update logging messages to include traceId and requestId
     public void setMethod(HttpMethod method) {
