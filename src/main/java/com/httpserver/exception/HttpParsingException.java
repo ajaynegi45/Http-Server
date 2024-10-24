@@ -9,8 +9,8 @@ import org.slf4j.LoggerFactory;
  */
 public class HttpParsingException extends RuntimeException {
 
-    private final HttpStatusCode statusCode;
     private static final Logger LOGGER = LoggerFactory.getLogger(HttpParsingException.class);
+    private final HttpStatusCode statusCode;
 
     /**
      * Constructs a new HttpParsingException with the specified HttpStatusCode.

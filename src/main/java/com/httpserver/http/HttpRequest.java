@@ -1,14 +1,15 @@
 package com.httpserver.http;
 
+import com.httpserver.exception.HttpParsingException;
+import com.httpserver.utils.RateLimiterConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import org.slf4j.Logger;
-import java.util.HashMap;
-import org.slf4j.LoggerFactory;
 import java.util.concurrent.ConcurrentHashMap;
-import com.httpserver.utils.RateLimiterConfig;
 import java.util.concurrent.atomic.AtomicInteger;
-import com.httpserver.exception.HttpParsingException;
 
 /**
  * Represents an HTTP request message, including the method, target, HTTP version,
@@ -20,18 +21,16 @@ public class HttpRequest extends HttpMessage {
 
     private static final int MAX_REQUESTS = RateLimiterConfig.getMaxRequests(); // Read from env
     private static final long TIME_WINDOW_MS = RateLimiterConfig.getTimeWindowMs(); // Read from env
-
+    // Rate limiter properties
+    private static final Map<String, RateLimiter> rateLimiters = new ConcurrentHashMap<>(); // Store rate limiters for clients
+    private final Map<String, String> headers = new HashMap<>(); // To store headers
+    private final String traceId; // To store the trace ID
+    private final String requestId; // To store the request ID
     private HttpMethod method;
     private String requestTarget;
     private String originalHttpVersion; // literal from the request
     private HttpVersion bestCompatibleHttpVersion;
-    private final Map<String, String> headers = new HashMap<>(); // To store headers
     private String body; // To store the body of the request
-    private final String traceId; // To store the trace ID
-    private final String requestId; // To store the request ID
-
-    // Rate limiter properties
-    private static final Map<String, RateLimiter> rateLimiters = new ConcurrentHashMap<>(); // Store rate limiters for clients
 
     /**
      * Default constructor for HttpRequest.
@@ -64,8 +63,25 @@ public class HttpRequest extends HttpMessage {
         return method;
     }
 
+    // Update logging messages to include traceId and requestId
+    public void setMethod(HttpMethod method) {
+        this.method = method;
+        logger.debug("HTTP method set to {} for trace ID {} and request ID {}", method, traceId, requestId);
+        logger.trace("Method set successfully for trace ID: {} and request ID: {}", traceId, requestId);
+    }
+
     public String getRequestTarget() {
         return requestTarget;
+    }
+
+    public void setRequestTarget(String requestTarget) throws HttpParsingException {
+        logger.trace("Attempting to set request target for trace ID {} and request ID {}", traceId, requestId);
+        if (requestTarget == null || requestTarget.isEmpty()) {
+            logger.error("Invalid request target: '{}' for trace ID {} and request ID {}. Request target must not be null or empty.", requestTarget, traceId, requestId);
+            throw new HttpParsingException(HttpStatusCode.SERVER_ERROR_500_INTERNAL_SERVER_ERROR);
+        }
+        this.requestTarget = requestTarget;
+        logger.debug("Request target set to '{}' for trace ID {} and request ID {}", requestTarget, traceId, requestId);
     }
 
     public String getOriginalHttpVersion() {
@@ -84,6 +100,11 @@ public class HttpRequest extends HttpMessage {
         return body;
     }
 
+    public void setBody(String body) {
+        logger.trace("Attempting to set body for trace ID {} and request ID {}", traceId, requestId);
+        this.body = body;
+        logger.debug("Request body set for trace ID {} and request ID {}", traceId, requestId);
+    }
 
     /**
      * Gets the trace ID for the request.
@@ -101,24 +122,6 @@ public class HttpRequest extends HttpMessage {
      */
     public String getRequestId() {
         return requestId;
-    }
-
-
-    // Update logging messages to include traceId and requestId
-    public void setMethod(HttpMethod method) {
-        this.method = method;
-        logger.debug("HTTP method set to {} for trace ID {} and request ID {}", method, traceId, requestId);
-        logger.trace("Method set successfully for trace ID: {} and request ID: {}", traceId, requestId);
-    }
-
-    public void setRequestTarget(String requestTarget) throws HttpParsingException {
-        logger.trace("Attempting to set request target for trace ID {} and request ID {}", traceId, requestId);
-        if (requestTarget == null || requestTarget.isEmpty()) {
-            logger.error("Invalid request target: '{}' for trace ID {} and request ID {}. Request target must not be null or empty.", requestTarget, traceId, requestId);
-            throw new HttpParsingException(HttpStatusCode.SERVER_ERROR_500_INTERNAL_SERVER_ERROR);
-        }
-        this.requestTarget = requestTarget;
-        logger.debug("Request target set to '{}' for trace ID {} and request ID {}", requestTarget, traceId, requestId);
     }
 
     public void setHttpVersion(String originalHttpVersion) throws BadHttpVersionException, HttpParsingException {
@@ -142,12 +145,6 @@ public class HttpRequest extends HttpMessage {
         logger.debug("Added header: {} = '{}' for trace ID {} and request ID {}", name, value, traceId, requestId);
     }
 
-    public void setBody(String body) {
-        logger.trace("Attempting to set body for trace ID {} and request ID {}", traceId, requestId);
-        this.body = body;
-        logger.debug("Request body set for trace ID {} and request ID {}", traceId, requestId);
-    }
-
     @Override
     public String toString() {
         return "HttpRequest{" +
@@ -166,8 +163,8 @@ public class HttpRequest extends HttpMessage {
     private static class RateLimiter {
         private final int maxRequests;
         private final long timeWindow; // in milliseconds
-        private long windowStartTime;
         private final AtomicInteger requestCount;
+        private long windowStartTime;
 
         /**
          * Constructs a RateLimiter with the specified maximum number of requests

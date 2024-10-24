@@ -18,7 +18,7 @@ public class BadHttpVersionException extends RuntimeException {
      * Constructs a new BadHttpVersionException with the specified detail message and cause.
      *
      * @param message the detail message
-     * @param cause the cause of the exception
+     * @param cause   the cause of the exception
      */
     public BadHttpVersionException(String message, Throwable cause) {
         super(message, cause);

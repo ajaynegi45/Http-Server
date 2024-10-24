@@ -10,35 +10,41 @@ import java.util.regex.Pattern;
  * Enum representing HTTP versions and their associated properties.
  */
 public enum HttpVersion {
-    /** HTTP version 1.1 */
+    /**
+     * HTTP version 1.1
+     */
     HTTP_1_1("HTTP/1.1", 1, 1);
 
-    /** The literal representation of the HTTP version. */
-    public final String LITERAL;
-
-    /** The major version number. */
-    public final int MAJOR;
-
-    /** The minor version number. */
-    public final int MINOR;
-
     private static final Logger LOGGER = LoggerFactory.getLogger(HttpVersion.class);
+    /**
+     * Regular expression pattern to match HTTP version literals.
+     */
+    private static final Pattern httpVersionRegexPattern = Pattern.compile("^HTTP/(?<major>\\d+).(?<minor>\\d+)");
+    /**
+     * The literal representation of the HTTP version.
+     */
+    public final String LITERAL;
+    /**
+     * The major version number.
+     */
+    public final int MAJOR;
+    /**
+     * The minor version number.
+     */
+    public final int MINOR;
 
     /**
      * Constructor to create an instance of HttpVersion with a literal, major, and minor version.
      *
      * @param LITERAL the literal representation of the HTTP version.
-     * @param MAJOR the major version number.
-     * @param MINOR the minor version number.
+     * @param MAJOR   the major version number.
+     * @param MINOR   the minor version number.
      */
     HttpVersion(String LITERAL, int MAJOR, int MINOR) {
         this.LITERAL = LITERAL;
         this.MAJOR = MAJOR;
         this.MINOR = MINOR;
     }
-
-    /** Regular expression pattern to match HTTP version literals. */
-    private static final Pattern httpVersionRegexPattern = Pattern.compile("^HTTP/(?<major>\\d+).(?<minor>\\d+)");
 
     /**
      * Retrieves the best compatible HttpVersion based on the provided literal version.

@@ -49,8 +49,8 @@ public class HttpParser {
      *
      * @param reader  the InputStreamReader to read the request line
      * @param request the HttpRequest object to populate
-     * @throws IOException           if an I/O error occurs
-     * @throws HttpParsingException  if the request line is invalid
+     * @throws IOException          if an I/O error occurs
+     * @throws HttpParsingException if the request line is invalid
      */
     private void parseRequestLine(InputStreamReader reader, HttpRequest request) throws IOException, HttpParsingException {
         StringBuilder processingDataBuffer = new StringBuilder();
@@ -76,12 +76,12 @@ public class HttpParser {
 
             if (_byte == SP) {
                 if (!methodParsed) {
-                    LOGGER.debug("Request Line METHOD to Process: {}", processingDataBuffer.toString());
+                    LOGGER.debug("Request Line METHOD to Process: {}", processingDataBuffer);
                     try {
                         request.setMethod(HttpMethod.valueOf(processingDataBuffer.toString()));
                         LOGGER.info("Parsed HTTP Method: {}", request.getMethod());
                     } catch (IllegalArgumentException e) {
-                        LOGGER.error("Unsupported HTTP Method: {}", processingDataBuffer.toString());
+                        LOGGER.error("Unsupported HTTP Method: {}", processingDataBuffer);
                         throw new HttpParsingException(HttpStatusCode.SERVER_ERROR_501_NOT_IMPLEMENTED);
                     }
                     methodParsed = true;
@@ -90,7 +90,7 @@ public class HttpParser {
                         LOGGER.error("Empty Request Target found.");
                         throw new HttpParsingException(HttpStatusCode.CLIENT_ERROR_400_BAD_REQUEST);
                     }
-                    LOGGER.debug("Request Line REQ TARGET to Process: {}", processingDataBuffer.toString());
+                    LOGGER.debug("Request Line REQ TARGET to Process: {}", processingDataBuffer);
                     request.setRequestTarget(processingDataBuffer.toString());
                     requestTargetParsed = true;
                 } else {
@@ -115,8 +115,8 @@ public class HttpParser {
      *
      * @param reader      the InputStreamReader to read the headers
      * @param httpRequest the HttpRequest object to populate with headers
-     * @throws IOException           if an I/O error occurs
-     * @throws HttpParsingException  if a header is invalid
+     * @throws IOException          if an I/O error occurs
+     * @throws HttpParsingException if a header is invalid
      */
     private void parseHeaders(InputStreamReader reader, HttpRequest httpRequest) throws IOException, HttpParsingException {
         BufferedReader bufferedReader = new BufferedReader(reader);
@@ -141,8 +141,8 @@ public class HttpParser {
      *
      * @param reader      the InputStreamReader to read the body
      * @param httpRequest the HttpRequest object to populate with the body
-     * @throws IOException           if an I/O error occurs
-     * @throws HttpParsingException  if the body cannot be parsed correctly
+     * @throws IOException          if an I/O error occurs
+     * @throws HttpParsingException if the body cannot be parsed correctly
      */
     private void parseBody(InputStreamReader reader, HttpRequest httpRequest) throws IOException, HttpParsingException {
         String contentLengthHeader = httpRequest.getHeaders().get("Content-Length");

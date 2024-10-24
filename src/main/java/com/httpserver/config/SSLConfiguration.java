@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Represents the configuration settings for the SSL (Secure Socket Layer) connection
- * in the HTTP server. This class holds the path to the keystore and the passwords 
+ * in the HTTP server. This class holds the path to the keystore and the passwords
  * required for SSL certificate management.
  */
 public class SSLConfiguration {
@@ -30,7 +30,7 @@ public class SSLConfiguration {
      * keystore password, and key password.
      *
      * @param keystorePath     the file path to the keystore containing the SSL certificate
-     * @param keystorePassword  the password to access the keystore
+     * @param keystorePassword the password to access the keystore
      * @param keyPassword      the password for the key entry in the keystore
      */
     public SSLConfiguration(String keystorePath, String keystorePassword, String keyPassword) {

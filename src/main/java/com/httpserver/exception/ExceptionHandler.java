@@ -1,14 +1,11 @@
 package com.httpserver.exception;
 
-import com.httpserver.exception.BadHttpVersionException;
-import com.httpserver.exception.HttpParsingException;
 import com.httpserver.http.HttpStatusCode;
 
 public class ExceptionHandler {
 
     public static String handleException(Exception e) {
-        if (e instanceof HttpParsingException) {
-            HttpParsingException ex = (HttpParsingException) e;
+        if (e instanceof HttpParsingException ex) {
             return formatErrorResponse(ex.getStatusCode());
         } else if (e instanceof BadHttpVersionException) {
             return formatErrorResponse(HttpStatusCode.SERVER_ERROR_505_HTTP_VERSION_NOT_SUPPORTED);

@@ -7,37 +7,56 @@ import org.slf4j.LoggerFactory;
  * Enum representing standard HTTP methods used in requests.
  */
 public enum HttpMethod {
-    /** The GET method requests data from a specified resource. */
+    /**
+     * The GET method requests data from a specified resource.
+     */
     GET,
 
-    /** The HEAD method requests the headers of a specified resource without the body. */
+    /**
+     * The HEAD method requests the headers of a specified resource without the body.
+     */
     HEAD,
 
-    /** The POST method submits data to be processed to a specified resource. */
+    /**
+     * The POST method submits data to be processed to a specified resource.
+     */
     POST,
 
-    /** The PUT method updates a current resource with new data. */
+    /**
+     * The PUT method updates a current resource with new data.
+     */
     PUT,
 
-    /** The DELETE method deletes a specified resource. */
+    /**
+     * The DELETE method deletes a specified resource.
+     */
     DELETE,
 
-    /** The CONNECT method establishes a tunnel to a server identified by a given URI. */
+    /**
+     * The CONNECT method establishes a tunnel to a server identified by a given URI.
+     */
     CONNECT,
 
-    /** The OPTIONS method describes the communication options for the target resource. */
+    /**
+     * The OPTIONS method describes the communication options for the target resource.
+     */
     OPTIONS,
 
-    /** The TRACE method performs a message loop-back test along the path to the target resource. */
+    /**
+     * The TRACE method performs a message loop-back test along the path to the target resource.
+     */
     TRACE,
 
-    /** The PATCH method applies partial modifications to a resource. */
+    /**
+     * The PATCH method applies partial modifications to a resource.
+     */
     PATCH;
 
-    private static final Logger logger = LoggerFactory.getLogger(HttpMethod.class);
-
-    /** The maximum length of the HTTP method names. */
+    /**
+     * The maximum length of the HTTP method names.
+     */
     public static final int MAX_LENGTH;
+    private static final Logger logger = LoggerFactory.getLogger(HttpMethod.class);
 
     static {
         logger.debug("Initializing HttpMethod enum and calculating MAX_LENGTH.");

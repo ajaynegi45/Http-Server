@@ -8,10 +8,10 @@ import java.util.Map;
  */
 public class HttpResponse {
 
+    private final Map<String, String> headers;
     private HttpStatusCode statusCode;
     private HttpVersion httpVersion;
     private String body;
-    private final Map<String, String> headers;
 
     /**
      * Constructs an empty HttpResponse with default settings.
@@ -31,24 +31,6 @@ public class HttpResponse {
     }
 
     /**
-     * Retrieves the HTTP version of the response.
-     *
-     * @return The HTTP version of the response.
-     */
-    public HttpVersion getHttpVersion() {
-        return httpVersion;
-    }
-
-    /**
-     * Retrieves the body content of the response.
-     *
-     * @return The body content as a string.
-     */
-    public String getBody() {
-        return body;
-    }
-
-    /**
      * Sets the HTTP status code for the response.
      *
      * @param statusCode The status code to be set.
@@ -58,12 +40,30 @@ public class HttpResponse {
     }
 
     /**
+     * Retrieves the HTTP version of the response.
+     *
+     * @return The HTTP version of the response.
+     */
+    public HttpVersion getHttpVersion() {
+        return httpVersion;
+    }
+
+    /**
      * Sets the HTTP version for the response.
      *
      * @param httpVersion The HTTP version to be set.
      */
     public void setHttpVersion(HttpVersion httpVersion) {
         this.httpVersion = httpVersion;
+    }
+
+    /**
+     * Retrieves the body content of the response.
+     *
+     * @return The body content as a string.
+     */
+    public String getBody() {
+        return body;
     }
 
     /**
@@ -78,7 +78,7 @@ public class HttpResponse {
     /**
      * Adds a header to the HTTP response.
      *
-     * @param key The header name.
+     * @param key   The header name.
      * @param value The header value.
      */
     public void addHeader(String key, String value) {
@@ -87,7 +87,7 @@ public class HttpResponse {
 
     /**
      * Builds the HTTP response by constructing the status line, headers, and body.
-     * 
+     *
      * @return The complete HTTP response as a formatted string.
      */
     public String buildResponse() {

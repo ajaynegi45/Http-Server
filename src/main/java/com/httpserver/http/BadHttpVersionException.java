@@ -1,7 +1,6 @@
 package com.httpserver.http;
 
 
-
-public class BadHttpVersionException extends Exception{
+public class BadHttpVersionException extends Exception {
 
 }

@@ -30,7 +30,7 @@ public class Json {
      * @param jsonSrc the JSON string to be parsed
      * @return a JsonNode representing the parsed JSON
      * @throws JsonProcessingException if there is a problem processing the JSON
-     * @throws IOException if an I/O error occurs while reading the JSON
+     * @throws IOException             if an I/O error occurs while reading the JSON
      */
     public static JsonNode parse(String jsonSrc) throws JsonProcessingException, IOException {
         return mapper.readTree(jsonSrc);
@@ -44,7 +44,7 @@ public class Json {
      * @param <A>   the type of the object to return
      * @return an object of type A represented by the JsonNode
      * @throws JsonProcessingException if there is a problem processing the JSON
-     * @throws IOException if an I/O error occurs during conversion
+     * @throws IOException             if an I/O error occurs during conversion
      */
     public static <A> A fromJson(JsonNode node, Class<A> clazz) throws JsonProcessingException, IOException {
         return mapper.convertValue(node, clazz);
