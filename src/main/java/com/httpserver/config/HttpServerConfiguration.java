@@ -9,8 +9,7 @@ import org.slf4j.LoggerFactory;
  */
 public class HttpServerConfiguration {
 
-    private static final Logger logger = LoggerFactory.getLogger(HttpServerConfiguration.class); // SLF4J logger
-    // instance
+    private static final Logger logger = LoggerFactory.getLogger(HttpServerConfiguration.class); // SLF4J logger instance
 
     private int httpPort;
     private int httpsPort;
