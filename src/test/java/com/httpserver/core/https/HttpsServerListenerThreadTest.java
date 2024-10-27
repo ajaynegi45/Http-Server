@@ -50,6 +50,7 @@ public class HttpsServerListenerThreadTest {
 
         serverListenerThread = new HttpsServerListenerThread(8443, "/webroot");
     }
+
     @AfterEach
     public void tearDown() {
         if (mockedSSLFactory != null) {

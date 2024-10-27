@@ -33,6 +33,7 @@ public class HttpServerListenerThreadTest {
             }
         };
     }
+
     @AfterEach
     public void tearDown() throws IOException, InterruptedException {
         if (serverListener.isAlive()) {
@@ -46,6 +47,7 @@ public class HttpServerListenerThreadTest {
         }
         Thread.sleep(100);
     }
+
     @Test
     public void acceptConnection() throws IOException {
         when(serverSocket.isBound()).thenReturn(true);

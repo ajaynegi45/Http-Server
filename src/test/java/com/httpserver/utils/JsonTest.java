@@ -105,8 +105,8 @@ class JsonTest {
     }
 
     static class InvalidPerson {
-        private String name;
-        private String age;
+        private final String name;
+        private final String age;
 
         public InvalidPerson(String name, String age) {
             this.name = name;

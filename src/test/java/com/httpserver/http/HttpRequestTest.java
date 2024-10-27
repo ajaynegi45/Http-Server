@@ -141,7 +141,4 @@ class HttpRequestTest {
             httpRequest.addHeader("", "application/json");
         }, "Header name must not be empty");
     }
-
-
-
 }
