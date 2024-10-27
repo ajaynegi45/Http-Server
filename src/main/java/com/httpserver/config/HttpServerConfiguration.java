@@ -4,9 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Represents the configuration settings for the HTTP and HTTPS server. This
- * class holds the server's port numbers for HTTP and HTTPS, and the web root
- * directory for serving files.
+ * Represents the configuration settings for the HTTP and HTTPS server.
+ * This class holds the server's port numbers for HTTP and HTTPS, and the web root directory for serving files.
  */
 public class HttpServerConfiguration {
 
