@@ -14,8 +14,7 @@ import java.util.Objects;
 
 /**
  * Main application class for the HTTP server.
- * This class initializes the server by loading configuration settings
- * and starting the server listener thread.
+ * This class initializes the server by loading configuration settings and starting the server listener thread.
  */
 @SpringBootApplication
 public class HttpServerApplication {

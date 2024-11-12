@@ -4,7 +4,6 @@ import com.httpserver.exception.HttpParsingException;
 import com.httpserver.utils.RateLimiterConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -12,8 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * Represents an HTTP request message, including the method, target, HTTP version,
- * headers, and body.
+ * Represents an HTTP request message, including the method, target, HTTP version, headers, and body.
  */
 public class HttpRequest extends HttpMessage {
 
@@ -21,6 +19,7 @@ public class HttpRequest extends HttpMessage {
 
     private static final int MAX_REQUESTS = RateLimiterConfig.getMaxRequests(); // Read from env
     private static final long TIME_WINDOW_MS = RateLimiterConfig.getTimeWindowMs(); // Read from env
+
     // Rate limiter properties
     private static final Map<String, RateLimiter> rateLimiters = new ConcurrentHashMap<>(); // Store rate limiters for clients
     private final Map<String, String> headers = new HashMap<>(); // To store headers
@@ -210,5 +209,4 @@ public class HttpRequest extends HttpMessage {
             return false; // Deny request
         }
     }
-
 }
