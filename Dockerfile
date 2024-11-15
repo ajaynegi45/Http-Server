@@ -15,16 +15,9 @@ EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "http-server.jar"]
 
 
-
-
 # mvn clean package
 # docker build -t http-server .
 # docker run -d -p 8080:8080 --name http-server-container http-server
-
-
-
-
-
 
 
 
@@ -34,7 +27,8 @@ ENTRYPOINT ["java", "-jar", "http-server.jar"]
 #COPY pom.xml .
 #COPY src ./src
 #RUN mvn clean package
-#
+
+
 ## Step 2: Runtime stage
 #FROM openjdk:17-jdk-slim
 #WORKDIR /app
