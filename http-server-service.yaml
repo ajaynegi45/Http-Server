@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: http-server-service
+  labels:
+    app: http-server
+spec:
+  type: LoadBalancer # Creates an external load balancer
+  ports:
+    - port: 80 # External port
+      targetPort: 8080 # Port on the container
+      protocol: TCP
+  selector:
+    app: http-server

@@ -1,0 +1,20 @@
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: http-server-hpa
+  labels:
+    app: http-server
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: http-server-deployment
+  minReplicas: 3 # Minimum number of pods
+  maxReplicas: 10 # Maximum number of pods
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 50 # Target 50% CPU utilization
