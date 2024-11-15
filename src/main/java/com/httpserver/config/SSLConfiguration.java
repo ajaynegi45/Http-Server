@@ -109,11 +109,10 @@ public class SSLConfiguration {
 
     @Override
     public String toString() {
-        String str = "SSLConfiguration{" +
+        return "SSLConfiguration{" +
                 "keystorePath='" + keystorePath + '\'' +
                 ", keystorePassword=[PROTECTED]" +
                 ", keyPassword=[PROTECTED]" +
                 '}';
-        return str;
     }
 }
