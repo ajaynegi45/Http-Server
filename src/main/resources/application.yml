@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: Http Server
+
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: [ "prometheus" ]

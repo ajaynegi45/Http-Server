@@ -79,6 +79,24 @@
 			<scope>test</scope>
 		</dependency>
 
+<!-- Actuator dependency enables endpoints that expose information about your application’s health, metrics, configuration, and monitoring. -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+
+<!-- Micrometer dependency is used to configure Spring Boot applications to expose metrics in a format that Prometheus can scrape and store. -->
+		<dependency>
+			<groupId>io.micrometer</groupId>
+			<artifactId>micrometer-registry-prometheus</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+
 	</dependencies>	
 
 	<build>
